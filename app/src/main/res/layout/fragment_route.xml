@@ -190,6 +190,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- CARD: DISTÂNCIA -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cartao_distancia"
             style="?attr/materialCardViewFilledStyle"
@@ -260,6 +261,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- DIVISOR: FRETE -->
         <View
             android:id="@+id/divisor_frete_esquerda"
             android:layout_width="0dp"
@@ -296,6 +298,7 @@
             app:layout_constraintStart_toEndOf="@id/texto_divisor_frete"
             app:layout_constraintTop_toTopOf="@id/texto_divisor_frete" />
 
+        <!-- CARDS: FRETE POR ANIMAL e FRETE TOTAL -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cartao_frete_por_animal"
             style="?attr/materialCardViewFilledStyle"
@@ -412,5 +415,54 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
+
+        <!-- DIVISOR: TRANSPORTE -->
+        <View
+            android:id="@+id/divisor_transporte_esquerda"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginEnd="8dp"
+            android:background="?attr/colorOutlineVariant"
+            app:layout_constraintBottom_toBottomOf="@id/texto_divisor_transporte"
+            app:layout_constraintEnd_toStartOf="@id/texto_divisor_transporte"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/texto_divisor_transporte" />
+
+        <TextView
+            android:id="@+id/texto_divisor_transporte"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:alpha="0.6"
+            android:text="@string/label_transporte"
+            android:textAllCaps="true"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="11sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cartao_frete_total" />
+
+        <View
+            android:id="@+id/divisor_transporte_direita"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="8dp"
+            android:background="?attr/colorOutlineVariant"
+            app:layout_constraintBottom_toBottomOf="@id/texto_divisor_transporte"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/texto_divisor_transporte"
+            app:layout_constraintTop_toTopOf="@id/texto_divisor_transporte" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/texto_divisor_transporte"
+            tools:listitem="@layout/item_transport" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

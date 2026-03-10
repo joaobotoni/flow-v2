@@ -27,7 +27,7 @@ public class LocationAdapter extends ListAdapter<Address, LocationAdapter.ViewHo
     private final OnClickListener listener;
 
     public LocationAdapter(OnClickListener listener) {
-        super(new AddressDiffCallback());
+        super(new DiffCallback());
         this.listener = listener;
     }
 
@@ -49,9 +49,7 @@ public class LocationAdapter extends ListAdapter<Address, LocationAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ItemAddressBinding binding = ItemAddressBinding.inflate(
-                LayoutInflater.from(parent.getContext()), parent, false
-        );
+        ItemAddressBinding binding = ItemAddressBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
         return new ViewHolder(binding);
     }
 
@@ -83,7 +81,7 @@ public class LocationAdapter extends ListAdapter<Address, LocationAdapter.ViewHo
         }
     }
 
-    private static class AddressDiffCallback extends DiffUtil.ItemCallback<Address> {
+    private static class DiffCallback extends DiffUtil.ItemCallback<Address> {
         @Override
         public boolean areItemsTheSame(@NonNull Address oldItem, @NonNull Address newItem) {
             return oldItem.getLatitude() == newItem.getLatitude()

@@ -10,8 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.botoni.flow.databinding.FragmentRouteBinding;
+import com.botoni.flow.ui.adapters.LocationAdapter;
+import com.botoni.flow.ui.adapters.TransportAdapter;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -25,11 +28,11 @@ public class RouteFragment extends Fragment {
     private static final String STATE_DISTANCE = "state_distance";
     private static final String STATE_ROUTE = "state_route";
     private static final String STATE_IS_LINKED = "state_is_linked";
-
     private FragmentRouteBinding binding;
     private Double distance;
     private String[] route;
     private boolean isLinked;
+    private TransportAdapter transportAdapter;
 
     @Override
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
@@ -49,6 +52,7 @@ public class RouteFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        configureRecyclerView();
         if (isDataReady()) {
             bindRouteData();
         }
@@ -72,6 +76,14 @@ public class RouteFragment extends Fragment {
         binding = null;
     }
 
+
+    private void configureRecyclerView() {
+        if (binding == null || !isAdded()) return;
+        transportAdapter = new TransportAdapter();
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.recyclerView.setAdapter(transportAdapter);
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     private void registerFragmentResultListener() {
         getParentFragmentManager().setFragmentResultListener("DealFragment", this, (key, result) -> {
@@ -92,7 +104,7 @@ public class RouteFragment extends Fragment {
     }
 
     private boolean isDataReady() {
-        return distance != null && route != null && route.length >= 2;
+        return distance != null && route != null;
     }
 
     private void bindRouteData() {
@@ -101,8 +113,10 @@ public class RouteFragment extends Fragment {
 
         binding.textoCidadeOrigem.setText(origin[0]);
         binding.textoEstadoOrigem.setText(origin[1]);
+
         binding.textoCidadeDestino.setText(destination[0]);
         binding.textoEstadoDestino.setText(destination[1]);
+
         binding.textoValorDistancia.setText(String.format(Locale.getDefault(), "%.2f", distance));
 
         if (!isLinked) {

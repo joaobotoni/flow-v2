@@ -45,12 +45,10 @@ public class SearchBottonSheetFragment extends BottomSheetFragment {
     private static final String TAG = "SearchBottonSheetFragment";
     private static final String STATE_KEYBOARD_VISIBLE = "state_keyboard_visible";
     private static final double[] DEFAULT_LAT_LNG = {34.06266637826144, -118.20323412642546};
-
     @Inject
     TaskHelper taskHelper;
     @Inject
     LocationRepository locationRepository;
-
     private FragmentSearchBottomSheetBinding binding;
     private boolean isKeyboardVisible = false;
     private LocationAdapter locationAdapter;

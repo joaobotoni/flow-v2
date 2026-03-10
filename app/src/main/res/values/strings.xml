@@ -193,4 +193,6 @@
     <string name="action_open_sheet">Ver frete</string>
     <string name="action_next">Prosseguir</string>
     <string name="erro_endereco_nao_encontrado">Endereço de destino não encontrado</string>
+    <string name="label_transporte">Transporte</string>
+    <string name="capacidade_cabecas">Capacidade: %1$d - %2$d cabeças</string>
 </resources>

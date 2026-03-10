@@ -29,11 +29,13 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.botoni.flow.R;
 import com.botoni.flow.data.repositories.local.CategoriaFreteRepository;
 import com.botoni.flow.databinding.FragmentDealBinding;
 import com.botoni.flow.ui.helpers.TaskHelper;
+import com.botoni.flow.ui.viewmodel.DealViewModel;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.shape.CornerFamily;
@@ -68,9 +70,12 @@ public class DealFragment extends Fragment {
 
     private boolean isFreteVisible = false;
 
+    private DealViewModel viewModel;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel = new ViewModelProvider(this).get(DealViewModel.class);
         restoreInstanceState(savedInstanceState);
         registerPermissionLauncher();
     }
@@ -98,7 +103,7 @@ public class DealFragment extends Fragment {
         setupTextWatchers();
         registerSearchBottomSheetResultListener(childFragmentManager);
         registerRouteResultListener(childFragmentManager);
-        mountRouteFragment(childFragmentManager);
+        attachRouteFragment(childFragmentManager, savedInstanceState);
         binding.layoutContainerFrete.setVisibility(isFreteVisible ? View.VISIBLE : View.GONE);
         binding.botaoAbrirBottomSheet.setOnClickListener(v -> openSearchBottomSheet());
     }
@@ -107,10 +112,7 @@ public class DealFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(STATE_CATEGORIA, selectedCategory);
-        if (binding != null) {
-            outState.putBoolean(STATE_FRETE_VISIBLE,
-                    binding.layoutContainerFrete.getVisibility() == View.VISIBLE);
-        }
+        outState.putBoolean(STATE_FRETE_VISIBLE, isFreteVisible);
     }
 
     @Override
@@ -128,7 +130,7 @@ public class DealFragment extends Fragment {
     private void registerSearchBottomSheetResultListener(FragmentManager childFragmentManager) {
         getParentFragmentManager().setFragmentResultListener(
                 "SearchBottonSheetFragment", this, (key, result) ->
-                    childFragmentManager.setFragmentResult(TAG, result)
+                        childFragmentManager.setFragmentResult(TAG, result)
         );
     }
 
@@ -141,12 +143,20 @@ public class DealFragment extends Fragment {
         });
     }
 
-    private void mountRouteFragment(FragmentManager childFragmentManager) {
-        if (childFragmentManager.findFragmentById(R.id.layout_container_frete) == null) {
+    private void attachRouteFragment(FragmentManager childFragmentManager, Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
             childFragmentManager.beginTransaction()
                     .replace(R.id.layout_container_frete, new RouteFragment())
                     .commit();
         }
+    }
+
+    private void resetRouteFragment(FragmentManager childFragmentManager) {
+        isFreteVisible = false;
+        binding.layoutContainerFrete.setVisibility(View.GONE);
+        childFragmentManager.beginTransaction()
+                .replace(R.id.layout_container_frete, new RouteFragment())
+                .commit();
     }
 
     private void openSearchBottomSheet() {
@@ -187,8 +197,6 @@ public class DealFragment extends Fragment {
         Chip chip = new Chip(requireContext());
         chip.setText(texto);
         chip.setCheckable(true);
-        chip.setCheckedIconVisible(true);
-        chip.setCheckedIcon(ContextCompat.getDrawable(requireContext(), R.drawable.check_24px));
         chip.setShapeAppearanceModel(ShapeAppearanceModel.builder()
                 .setAllCorners(CornerFamily.ROUNDED, 50f)
                 .build());
@@ -226,14 +234,13 @@ public class DealFragment extends Fragment {
     }
 
     private boolean hasPermissions(String... permissions) {
-        if (!isAdded() || permissions == null) return false;
         for (String permission : permissions) {
             if (ContextCompat.checkSelfPermission(requireContext(), permission)
-                    == PackageManager.PERMISSION_GRANTED) {
-                return true;
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     private void registerPermissionLauncher() {
