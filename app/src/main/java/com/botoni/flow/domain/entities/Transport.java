@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.util.Objects;
+
 public class Transport implements Parcelable {
     private String name;
     private Integer quantity;
@@ -110,5 +112,17 @@ public class Transport implements Parcelable {
 
     public void setFinalCapacity(Integer finalCapacity) {
         this.finalCapacity = finalCapacity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Transport transport = (Transport) o;
+        return Objects.equals(name, transport.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name);
     }
 }

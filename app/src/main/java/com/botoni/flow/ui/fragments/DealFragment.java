@@ -23,7 +23,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -42,9 +41,9 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class DealFragment extends Fragment {
+    private static final String KEY_SEARCH_SHEET = "SearchBottomSheetFragment";
+    private static final String KEY_DEAL = "DealFragment";
 
-    private static final String TAG = "DealFragment";
-    private static final String SEARCH_SHEET_KEY = "SearchBottonSheetFragment";
     private static final String[] LOCATION_PERMISSIONS = {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
@@ -58,22 +57,20 @@ public class DealFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        permissionLauncher = PermissionHelper.register(this, (granted, result) -> {
-            if (!granted) onPermissionDenied();
-        });
+        registerPermissionLauncher();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if (!hasPermissions(requireContext(), LOCATION_PERMISSIONS)) {
-            request(requireContext(), permissionLauncher, LOCATION_PERMISSIONS);
-        }
+        requestLocationPermissionsIfNeeded();
     }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         binding = FragmentDealBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -81,10 +78,10 @@ public class DealFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupViewModels();
-        setupChildFragments(getChildFragmentManager(), savedInstanceState);
-        setupViews();
-        setupObservers();
+        initViewModels();
+        initChildFragments(savedInstanceState);
+        initViews();
+        initObservers();
     }
 
     @Override
@@ -93,61 +90,62 @@ public class DealFragment extends Fragment {
         binding = null;
     }
 
-    private void setupViewModels() {
+    private void initViewModels() {
         dealViewModel = new ViewModelProvider(requireActivity()).get(DealViewModel.class);
         routeViewModel = new ViewModelProvider(requireActivity()).get(RouteViewModel.class);
     }
 
-    private void setupViews() {
-        setupCategoryAdapter();
-        setupInputWatchers();
+    private void initChildFragments(@Nullable Bundle savedInstanceState) {
+        relaySearchSheetResult();
+        if (savedInstanceState == null) attachRouteFragment();
+    }
+
+    private void initViews() {
+        initCategoryAdapter();
+        initInputWatchers();
         binding.botaoAbrirBottomSheet.setOnClickListener(v -> openSearchSheet());
     }
 
-    private void setupChildFragments(FragmentManager fragmentManager, Bundle savedInstanceState) {
-        forwardSearchSheetResult(fragmentManager);
-        if (savedInstanceState == null) attachRouteFragment(fragmentManager);
-    }
-
-    private void setupObservers() {
+    private void initObservers() {
+        observeCategories();
         observeFreightVisibility();
         observeDealState();
-        dealViewModel.getCategories().observe(getViewLifecycleOwner(), categoryAdapter::submitList);
-        dealViewModel.getError().observe(getViewLifecycleOwner(), error ->
-                showSnackBar(binding.getRoot(), getString(R.string.error_generic)));
+        observeErrors();
     }
 
-    private void setupCategoryAdapter() {
-        categoryAdapter = new CategoryAdapter(dealViewModel::selectCategory);
+    private void initCategoryAdapter() {
+        categoryAdapter = new CategoryAdapter(dealViewModel::select);
         binding.listaCategorias.setAdapter(categoryAdapter);
     }
 
-    private void setupInputWatchers() {
-        if (binding == null) return;
+    private void initInputWatchers() {
         binding.entradaTextoPesoAnimal.addTextChangedListener(SimpleTextWatcher(this::onInputChanged));
         binding.entradaTextoQuantidadeAnimais.addTextChangedListener(SimpleTextWatcher(this::onInputChanged));
     }
 
-    private void observeFreightVisibility() {
-        MediatorLiveData<Boolean> freightVisible = new MediatorLiveData<>();
-        freightVisible.addSource(dealViewModel.getState(), ignored -> freightVisible.setValue(shouldShowFreight()));
-        freightVisible.addSource(routeViewModel.getState(), ignored -> freightVisible.setValue(shouldShowFreight()));
-        freightVisible.observe(getViewLifecycleOwner(), show ->
-                binding.layoutContainerFrete.setVisibility(Boolean.TRUE.equals(show) ? View.VISIBLE : View.GONE));
+    private void observeCategories() {
+        dealViewModel.getCategories().observe(getViewLifecycleOwner(), categoryAdapter::submitList);
+    }
+
+    private void observeErrors() {
+        dealViewModel.getErrorEvent().observe(getViewLifecycleOwner(),
+                error -> showSnackBar(binding.getRoot(), getString(R.string.error_generic)));
     }
 
     private void observeDealState() {
-        dealViewModel.getState().observe(getViewLifecycleOwner(), state -> {
+        dealViewModel.getUiState().observe(getViewLifecycleOwner(), state -> {
             if (state == null) return;
             setResultsVisible(state.isCalculated());
             if (state.isCalculated()) bindResults(state);
         });
     }
 
-    private void setResultsVisible(boolean visible) {
-        int visibility = visible ? View.VISIBLE : View.GONE;
-        binding.layoutContainerResultados.setVisibility(visibility);
-        binding.layoutContainerBotoes.setVisibility(visibility);
+    private void observeFreightVisibility() {
+        MediatorLiveData<Boolean> freightVisible = new MediatorLiveData<>();
+        freightVisible.addSource(dealViewModel.getUiState(), ignored -> freightVisible.setValue(shouldShowFreight()));
+        freightVisible.addSource(routeViewModel.getUiState(), ignored -> freightVisible.setValue(shouldShowFreight()));
+        freightVisible.observe(getViewLifecycleOwner(), show ->
+                binding.layoutContainerFrete.setVisibility(Boolean.TRUE.equals(show) ? View.VISIBLE : View.GONE));
     }
 
     private void bindResults(DealUiState state) {
@@ -156,22 +154,22 @@ public class DealFragment extends Fragment {
         binding.textoValorTotal.setText(formatCurrency(state.getValorTotal()));
     }
 
-    private boolean shouldShowFreight() {
-        boolean isCalculated = dealViewModel.getState().getValue() != null
-                && dealViewModel.getState().getValue().isCalculated();
-        boolean hasRoute = routeViewModel.getState().getValue() != null
-                && routeViewModel.getState().getValue().isFreightVisible();
-        return isCalculated && hasRoute;
+    private void setResultsVisible(boolean visible) {
+        int visibility = visible ? View.VISIBLE : View.GONE;
+        binding.layoutContainerResultados.setVisibility(visibility);
+        binding.layoutContainerBotoes.setVisibility(visibility);
     }
 
-    private void forwardSearchSheetResult(FragmentManager fragmentManager) {
+    private void relaySearchSheetResult() {
         getParentFragmentManager().setFragmentResultListener(
-                SEARCH_SHEET_KEY, getViewLifecycleOwner(),
-                (key, result) -> fragmentManager.setFragmentResult(TAG, result));
+                KEY_SEARCH_SHEET,
+                getViewLifecycleOwner(),
+                (key, result) -> getChildFragmentManager().setFragmentResult(KEY_DEAL, result)
+        );
     }
 
-    private void attachRouteFragment(FragmentManager fragmentManager) {
-        fragmentManager.beginTransaction()
+    private void attachRouteFragment() {
+        getChildFragmentManager().beginTransaction()
                 .replace(R.id.layout_container_frete, new RouteFragment())
                 .commit();
     }
@@ -185,27 +183,38 @@ public class DealFragment extends Fragment {
         String weight = getTexto(binding.entradaTextoPesoAnimal);
         String quantity = getTexto(binding.entradaTextoQuantidadeAnimais);
 
-        if (isFilled(weight, quantity)) {
-            BigDecimal weight_ = getBigDecimal(binding.entradaTextoPesoAnimal);
-            Integer quantity_ = getInt(binding.entradaTextoQuantidadeAnimais);
-            dealViewModel.calculate(weight_, quantity_);
+        if (allFilled(weight, quantity)) {
+            BigDecimal weightValue = getBigDecimal(binding.entradaTextoPesoAnimal);
+            Integer quantityValue = getInt(binding.entradaTextoQuantidadeAnimais);
+            dealViewModel.calculate(weightValue, quantityValue);
         } else {
-            dealViewModel.clear();
+            dealViewModel.reset();
         }
     }
 
-    private boolean isFilled(String... fields) {
-        if (binding == null) return false;
+    private boolean allFilled(String... fields) {
         return Arrays.stream(fields).noneMatch(String::isEmpty);
     }
 
-    private void onPermissionDenied() {
+    private void registerPermissionLauncher() {
+        permissionLauncher = PermissionHelper.register(this, (granted, result) -> {
+            if (!granted) onLocationPermissionDenied();
+        });
+    }
+
+    private void requestLocationPermissionsIfNeeded() {
+        if (!hasPermissions(requireContext(), LOCATION_PERMISSIONS)) {
+            request(requireContext(), permissionLauncher, LOCATION_PERMISSIONS);
+        }
+    }
+
+    private void onLocationPermissionDenied() {
         showDialog(
                 requireContext(),
                 getString(R.string.dialog_title_permission_location),
                 getString(R.string.dialog_message_permission_location),
                 (dialog, which) -> openAppSettings(),
-                (dialog, which) -> { if (getActivity() != null) requireActivity().finish(); });
+                (dialog, which) -> { if (isAdded()) requireActivity().finish(); });
     }
 
     private void openAppSettings() {
@@ -213,5 +222,13 @@ public class DealFragment extends Fragment {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent.setData(Uri.fromParts("package", requireContext().getPackageName(), null));
         startActivity(intent);
+    }
+
+    private boolean shouldShowFreight() {
+        boolean isCalculated = dealViewModel.getUiState().getValue() != null
+                && dealViewModel.getUiState().getValue().isCalculated();
+        boolean hasRoute = routeViewModel.getUiState().getValue() != null
+                && routeViewModel.getUiState().getValue().isFreightVisible();
+        return isCalculated && hasRoute;
     }
 }

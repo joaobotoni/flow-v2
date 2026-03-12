@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.botoni.flow.databinding.FragmentRouteBinding;
 import com.botoni.flow.ui.adapters.TransportAdapter;
+import com.botoni.flow.ui.state.RouteUiState;
 import com.botoni.flow.ui.viewmodel.RouteViewModel;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -24,20 +24,18 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class RouteFragment extends Fragment {
-    private static final String TAG = "RouteFragment";
+
+    private static final String KEY_DEAL = "DealFragment";
     private static final String KEY_DISTANCE = "distance";
     private static final String KEY_POINTS = "points";
-    private static final String STATE_DISTANCE = "state_distance";
-    private static final String STATE_POINTS = "state_points";
-    private static final String REQUEST_KEY_DEAL_FRAGMENT = "DealFragment";
     private FragmentRouteBinding binding;
     private RouteViewModel viewModel;
-    ArrayList<String> points = new ArrayList<>();
-    double distance = 0.0;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         binding = FragmentRouteBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -45,20 +43,10 @@ public class RouteFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        viewModel = new ViewModelProvider(requireActivity()).get(RouteViewModel.class);
-        onBindViews();
-        onAttachFragments();
-        viewModel.getState().observe(getViewLifecycleOwner(), routeState -> {
-            bindRouteData(routeState.getPoints(), routeState.getDistance());
-        });
-    }
-
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putDouble(STATE_DISTANCE, distance);
-        outState.putStringArrayList(STATE_POINTS, points);
+        initViewModel();
+        initViews();
+        initObservers();
+        initResultListener();
     }
 
     @Override
@@ -67,47 +55,40 @@ public class RouteFragment extends Fragment {
         binding = null;
     }
 
-    private void onBindViews() {
-        setupRecyclerView();
+    private void initViewModel() {
+        viewModel = new ViewModelProvider(requireActivity()).get(RouteViewModel.class);
     }
 
-    private void onAttachFragments() {
-        registerRouteResultListener();
-    }
-
-    private void setupRecyclerView() {
-        if (binding == null || !isAdded()) return;
-        TransportAdapter transportAdapter = new TransportAdapter();
+    private void initViews() {
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.recyclerView.setAdapter(transportAdapter);
+        binding.recyclerView.setAdapter(new TransportAdapter());
     }
 
-    private void registerRouteResultListener() {
-        getParentFragmentManager().setFragmentResultListener(
-                REQUEST_KEY_DEAL_FRAGMENT, getViewLifecycleOwner(), (key, result) -> {
-                    points = result.getStringArrayList(KEY_POINTS);
-                    distance = result.getDouble(KEY_DISTANCE);
-                    if (points != null && !points.isEmpty()) {
-                        viewModel.setRoute(points, distance);
-                    }
-                }
-        );
+    private void initObservers() {
+        viewModel.getUiState().observe(getViewLifecycleOwner(), this::bindRoute);
     }
 
-    private void bindRouteData(List<String> points, double distance) {
-        if (binding == null || points == null || points.size() < 2) return;
+    private void initResultListener() {
+        getParentFragmentManager().setFragmentResultListener(KEY_DEAL, getViewLifecycleOwner(),
+                (key, result) -> viewModel.setRoute(
+                        result.getStringArrayList(KEY_POINTS),
+                        result.getDouble(KEY_DISTANCE)));
+    }
 
-        String[] origin = parseRoutePoint(points.get(0));
-        String[] destination = parseRoutePoint(points.get(1));
+    private void bindRoute(RouteUiState state) {
+        if (binding == null || state.getPoints() == null || state.getPoints().size() < 2) return;
+
+        String[] origin = parsePoint(state.getPoints().get(0));
+        String[] destination = parsePoint(state.getPoints().get(1));
 
         binding.textoCidadeOrigem.setText(origin[0]);
         binding.textoEstadoOrigem.setText(origin[1]);
         binding.textoCidadeDestino.setText(destination[0]);
         binding.textoEstadoDestino.setText(destination[1]);
-        binding.textoValorDistancia.setText(String.format(Locale.getDefault(), "%.2f", distance));
+        binding.textoValorDistancia.setText(String.format(Locale.getDefault(), "%.2f", state.getDistance()));
     }
 
-    private String[] parseRoutePoint(String point) {
+    private String[] parsePoint(String point) {
         return Arrays.stream(point.split(","))
                 .map(String::trim)
                 .toArray(String[]::new);

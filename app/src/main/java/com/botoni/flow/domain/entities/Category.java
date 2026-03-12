@@ -5,8 +5,9 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-public class Category implements Parcelable {
+import java.util.Objects;
 
+public class Category implements Parcelable {
     private String description;
     private boolean check;
 
@@ -60,5 +61,17 @@ public class Category implements Parcelable {
     public void writeToParcel(@NonNull Parcel parcel, int i) {
         parcel.writeString(description);
         parcel.writeByte((byte) (check ? 1 : 0));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Category category = (Category) o;
+        return check == category.check && Objects.equals(description, category.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(description, check);
     }
 }

@@ -42,7 +42,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class SearchBottonSheetFragment extends BottomSheetFragment {
 
-    private static final String TAG = "SearchBottonSheetFragment";
+    private static final String TAG = "SearchBottomSheetFragment";
     private static final String KEY_KEYBOARD_VISIBLE = "state_keyboard_visible";
     private static final double DESTINATION_LAT = 34.06266637826144;
     private static final double DESTINATION_LNG = -118.20323412642546;
