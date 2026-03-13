@@ -44,11 +44,13 @@ public class SearchBottonSheetFragment extends BottomSheetFragment {
 
     private static final String TAG = "SearchBottomSheetFragment";
     private static final String KEY_KEYBOARD_VISIBLE = "state_keyboard_visible";
-    private static final double DESTINATION_LAT = 34.06266637826144;
-    private static final double DESTINATION_LNG = -118.20323412642546;
+    private static final double DESTINATION_LAT = -15.554707386143166;
+    private static final double DESTINATION_LNG = -55.650201110432235;
 
-    @Inject TaskHelper taskHelper;
-    @Inject LocationRepository locationRepository;
+    @Inject
+    TaskHelper taskHelper;
+    @Inject
+    LocationRepository locationRepository;
 
     private FragmentSearchBottomSheetBinding binding;
     private LocationAdapter locationAdapter;
@@ -193,16 +195,17 @@ public class SearchBottonSheetFragment extends BottomSheetFragment {
         double distance = locationRepository.parseDistance(
                 locationRepository.fetchRoute(origin, destination));
         Bundle result = new Bundle();
-        result.putStringArrayList("points", new ArrayList<>(Arrays.asList(
-                toAddressString(origin),
-                toAddressString(destination)
-        )));
+        result.putStringArrayList("points", new ArrayList<>(Arrays.asList(toAddressString(origin), toAddressString(destination))));
         result.putDouble("distance", distance);
         return result;
     }
 
     private String toAddressString(Address address) {
-        return String.format("%s, %s", address.getLocality(), address.getAdminArea());
+        if (address == null) return "";
+        String city = address.getLocality() != null ? address.getLocality() : address.getSubAdminArea();
+        String state = address.getAdminArea();
+        if (city != null && state != null) return String.format("%s, %s", city, state);
+        return address.getMaxAddressLineIndex() >= 0 ? address.getAddressLine(0) : "Local desconhecido";
     }
 
     @SuppressLint("MissingPermission")
@@ -215,8 +218,13 @@ public class SearchBottonSheetFragment extends BottomSheetFragment {
         }
         taskHelper.execute(
                 () -> locationRepository.searchCityAndState(query),
-                results -> { if (isAdded() && locationAdapter != null) locationAdapter.submitList(results); },
-                error -> { showSnackBar(binding.getRoot(), getString(R.string.error_search_address)); clearLocationList(); }
+                results -> {
+                    if (isAdded() && locationAdapter != null) locationAdapter.submitList(results);
+                },
+                error -> {
+                    showSnackBar(binding.getRoot(), getString(R.string.error_search_address));
+                    clearLocationList();
+                }
         );
     }
 

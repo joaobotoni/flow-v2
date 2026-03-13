@@ -1,5 +1,7 @@
 package com.botoni.flow.ui.adapters;
 
+import static com.botoni.flow.ui.helpers.ViewHelper.setText;
+
 import android.location.Address;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -74,10 +76,6 @@ public class LocationAdapter extends ListAdapter<Address, LocationAdapter.ViewHo
             setText(binding.textoNomeCidade, address.getLocality());
             setText(binding.textoNomeEstado, address.getAdminArea());
             itemView.setOnClickListener(v -> listener.onClick(address));
-        }
-
-        private void setText(TextView textView, String text) {
-            textView.setText(text != null ? text.trim() : "");
         }
     }
 

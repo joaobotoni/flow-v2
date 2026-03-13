@@ -1,5 +1,7 @@
 package com.botoni.flow.ui.adapters;
 
+import static com.botoni.flow.ui.helpers.ViewHelper.setText;
+
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -47,7 +49,7 @@ public class CategoryAdapter extends ListAdapter<Category, CategoryAdapter.ViewH
         }
 
         void bind(Category category, OnClickListener listener) {
-            binding.chipText.setText(category.getDescription());
+            setText(binding.chipText, category.getDescription());
             binding.chipCard.setChecked(category.isCheck());
             binding.chipCard.setOnClickListener(v -> listener.onClick(category));
         }
@@ -56,12 +58,14 @@ public class CategoryAdapter extends ListAdapter<Category, CategoryAdapter.ViewH
     private static class DiffCallback extends DiffUtil.ItemCallback<Category> {
         @Override
         public boolean areItemsTheSame(@NonNull Category oldItem, @NonNull Category newItem) {
-            return Objects.equals(oldItem.getDescription(), newItem.getDescription());
+            return oldItem.getId() == newItem.getId();
         }
 
         @Override
         public boolean areContentsTheSame(@NonNull Category oldItem, @NonNull Category newItem) {
-            return oldItem.equals(newItem);
+            return oldItem.getId() == newItem.getId()
+                    && Objects.equals(oldItem.getDescription(), newItem.getDescription())
+                    && oldItem.isCheck() == newItem.isCheck();
         }
     }
 }

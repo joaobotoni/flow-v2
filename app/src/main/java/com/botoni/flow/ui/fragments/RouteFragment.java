@@ -17,7 +17,6 @@ import com.botoni.flow.ui.state.RouteUiState;
 import com.botoni.flow.ui.viewmodel.RouteViewModel;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -30,6 +29,7 @@ public class RouteFragment extends Fragment {
     private static final String KEY_POINTS = "points";
     private FragmentRouteBinding binding;
     private RouteViewModel viewModel;
+    private TransportAdapter transportAdapter;
 
     @Nullable
     @Override
@@ -44,7 +44,7 @@ public class RouteFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initViewModel();
-        initViews();
+        initRecyclerView();
         initObservers();
         initResultListener();
     }
@@ -59,13 +59,15 @@ public class RouteFragment extends Fragment {
         viewModel = new ViewModelProvider(requireActivity()).get(RouteViewModel.class);
     }
 
-    private void initViews() {
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.recyclerView.setAdapter(new TransportAdapter());
+    private void initRecyclerView() {
+        transportAdapter = new TransportAdapter();
+        binding.recyclerView.setAdapter(transportAdapter);
     }
 
     private void initObservers() {
         viewModel.getUiState().observe(getViewLifecycleOwner(), this::bindRoute);
+        viewModel.getTransports().observe(getViewLifecycleOwner(), transportAdapter::submitList);
+        viewModel.getErrorEvent().observe(getViewLifecycleOwner(), error -> {});
     }
 
     private void initResultListener() {

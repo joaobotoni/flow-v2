@@ -69,7 +69,6 @@ public class RoutesDataSource {
                 .put("destination", toWaypoint(destination))
                 .put("travelMode", "DRIVE")
                 .put("routingPreference", "TRAFFIC_AWARE_OPTIMAL")
-                .put("departureTime", java.time.Instant.now().toString())
                 .put("units", "METRIC")
                 .toString();
     }

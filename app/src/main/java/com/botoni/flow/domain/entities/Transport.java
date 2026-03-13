@@ -8,37 +8,46 @@ import androidx.annotation.NonNull;
 import java.util.Objects;
 
 public class Transport implements Parcelable {
+    private long id;
     private String name;
     private Integer quantity;
-    private Integer initialCapacity;
-    private Integer finalCapacity;
+    private Integer percent;
+    private Integer capacity;
 
     public Transport() {
     }
 
-    public Transport(String name, Integer quantity, Integer initialCapacity, Integer finalCapacity) {
+    public Transport(long id, String name, Integer quantity, Integer capacity, Integer percent) {
+        this.id = id;
         this.name = name;
         this.quantity = quantity;
-        this.initialCapacity = initialCapacity;
-        this.finalCapacity = finalCapacity;
+        this.capacity = capacity;
+        this.percent = percent;
     }
 
     protected Transport(Parcel in) {
+        id = in.readLong();
         name = in.readString();
-        if (in.readByte() == 0) {
-            quantity = null;
+        quantity = in.readByte() == 0 ? null : in.readInt();
+        capacity = in.readByte() == 0 ? null : in.readInt();
+        percent = in.readByte() == 0 ? null : in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeLong(id);
+        parcel.writeString(name);
+        writeNullableInt(parcel, quantity);
+        writeNullableInt(parcel, capacity);
+        writeNullableInt(parcel, percent);
+    }
+
+    private void writeNullableInt(Parcel parcel, Integer value) {
+        if (value == null) {
+            parcel.writeByte((byte) 0);
         } else {
-            quantity = in.readInt();
-        }
-        if (in.readByte() == 0) {
-            initialCapacity = null;
-        } else {
-            initialCapacity = in.readInt();
-        }
-        if (in.readByte() == 0) {
-            finalCapacity = null;
-        } else {
-            finalCapacity = in.readInt();
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(value);
         }
     }
 
@@ -59,70 +68,30 @@ public class Transport implements Parcelable {
         return 0;
     }
 
-    @Override
-    public void writeToParcel(@NonNull Parcel parcel, int i) {
-        parcel.writeString(name);
-        if (quantity == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeInt(quantity);
-        }
-        if (initialCapacity == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeInt(initialCapacity);
-        }
-        if (finalCapacity == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeInt(finalCapacity);
-        }
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public Integer getInitialCapacity() {
-        return initialCapacity;
-    }
-
-    public void setInitialCapacity(Integer initialCapacity) {
-        this.initialCapacity = initialCapacity;
-    }
-
-    public Integer getFinalCapacity() {
-        return finalCapacity;
-    }
-
-    public void setFinalCapacity(Integer finalCapacity) {
-        this.finalCapacity = finalCapacity;
-    }
+    public long getId() { return id; }
+    public void setId(long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public Integer getQuantity() { return quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+    public Integer getPercent() { return percent; }
+    public void setPercent(Integer percent) { this.percent = percent; }
+    public Integer getCapacity() { return capacity; }
+    public void setCapacity(Integer capacity) { this.capacity = capacity; }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Transport transport = (Transport) o;
-        return Objects.equals(name, transport.name);
+        return id == transport.id
+                && Objects.equals(name, transport.name)
+                && Objects.equals(quantity, transport.quantity)
+                && Objects.equals(percent, transport.percent)
+                && Objects.equals(capacity, transport.capacity);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name);
+        return Objects.hash(id, name, quantity, percent, capacity);
     }
 }

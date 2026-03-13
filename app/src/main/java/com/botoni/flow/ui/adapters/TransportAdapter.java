@@ -1,9 +1,11 @@
 package com.botoni.flow.ui.adapters;
 
+import static com.botoni.flow.ui.helpers.ViewHelper.setPluralText;
+import static com.botoni.flow.ui.helpers.ViewHelper.setText;
+
+import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
@@ -17,6 +19,7 @@ import com.botoni.flow.domain.entities.Transport;
 import java.util.Objects;
 
 public class TransportAdapter extends ListAdapter<Transport, TransportAdapter.ViewHolder> {
+
     public TransportAdapter() {
         super(new DiffCallback());
     }
@@ -24,54 +27,45 @@ public class TransportAdapter extends ListAdapter<Transport, TransportAdapter.Vi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ItemTransportBinding binding = ItemTransportBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
-        return new ViewHolder(binding.getRoot());
+        return new ViewHolder(ItemTransportBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-       holder.bind(getItem(position));
+        holder.bind(getItem(position));
     }
 
-    public static final class ViewHolder extends RecyclerView.ViewHolder {
-        ItemTransportBinding binding;
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        private final ItemTransportBinding binding;
+
+        ViewHolder(ItemTransportBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         void bind(Transport transport) {
+            Context context = itemView.getContext();
             setText(binding.textoTipoVeiculo, transport.getName());
-            setText(binding.textoQuantidadeVeiculos, String.valueOf(transport.getQuantity()));
-            String textCapacity = formatCapacity(transport);
-            setText(binding.textoCapacidadeCabecas, textCapacity);
-        }
-
-        private void setText(TextView textView, String text) {
-            textView.setText(text != null ? text.trim() : "");
-        }
-
-        private String formatCapacity(Transport transport) {
-            if (transport == null) return "";
-            int min = transport.getInitialCapacity();
-            int max = transport.getFinalCapacity();
-            return itemView.getContext().getString(R.string.capacidade_cabecas, min, max);
+            setPluralText(binding.textoQuantidadeVeiculos, context, R.plurals.quantidade_veiculos, transport.getQuantity());
+            setText(binding.textoCapacidadeCabecas, context, R.string.capacidade_cabecas, transport.getCapacity());
+            setText(binding.textoPorcentagemOcupada, context, R.string.percent, transport.getPercent());
         }
     }
-
 
     private static class DiffCallback extends DiffUtil.ItemCallback<Transport> {
         @Override
         public boolean areItemsTheSame(@NonNull Transport oldItem, @NonNull Transport newItem) {
-            return Objects.equals(oldItem.getName(), newItem.getName()) &&
-                    Objects.equals(oldItem.getQuantity(), newItem.getQuantity());
+            return oldItem.getId() == newItem.getId();
         }
 
         @Override
         public boolean areContentsTheSame(@NonNull Transport oldItem, @NonNull Transport newItem) {
-            return Objects.equals(oldItem.getName(), newItem.getName()) &&
-                    Objects.equals(oldItem.getQuantity(), newItem.getQuantity()) &&
-                    Objects.equals(oldItem.getInitialCapacity(), newItem.getInitialCapacity()) &&
-                    Objects.equals(oldItem.getFinalCapacity(), newItem.getFinalCapacity());
+            return oldItem.getId() == newItem.getId()
+                    && Objects.equals(oldItem.getName(), newItem.getName())
+                    && Objects.equals(oldItem.getQuantity(), newItem.getQuantity())
+                    && Objects.equals(oldItem.getPercent(), newItem.getPercent())
+                    && Objects.equals(oldItem.getCapacity(), newItem.getCapacity());
         }
     }
 }

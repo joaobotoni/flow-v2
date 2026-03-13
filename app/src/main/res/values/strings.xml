@@ -194,6 +194,10 @@
     <string name="action_next">Prosseguir</string>
     <string name="erro_endereco_nao_encontrado">Endereço de destino não encontrado</string>
     <string name="label_transporte">Transporte</string>
-    <string name="capacidade_cabecas">Capacidade: %1$d - %2$d cabeças</string>
-    <string name="quantidade_veiculos"> %1$d veículos</string>
+    <string name="capacidade_cabecas">Capacidade: %1$d cabeças</string>
+    <plurals name="quantidade_veiculos">
+        <item quantity="one">%1$d veículo</item>
+        <item quantity="other">%1$d veículos</item>
+    </plurals>
+    <string name="percent"> %1$d%%</string>
 </resources>

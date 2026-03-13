@@ -32,7 +32,6 @@ public class DealViewModel extends ViewModel {
     private final MutableLiveData<List<Category>> categories = new MutableLiveData<>(Collections.emptyList());
     private final MutableLiveData<Category> selectedCategory = new MutableLiveData<>(new Category());
     private final MutableLiveData<Exception> errorEvent = new MutableLiveData<>();
-
     @Inject
     public DealViewModel(AvaliacaoPrecoAnimalUseCase avaliacaoPrecoAnimalUseCase , CategoriaFreteRepository freightRepo, TaskHelper taskExecutor) {
         this.avaliacaoPrecoAnimalUseCase = avaliacaoPrecoAnimalUseCase;
@@ -80,7 +79,7 @@ public class DealViewModel extends ViewModel {
     private List<Category> fetchCategories() {
         List<Category> list = new ArrayList<>();
         for (CategoriaFrete entity : freightRepo.getAll()) {
-            list.add(new Category(entity.getDescricao(), false));
+            list.add(new Category(entity.getId(),entity.getDescricao(), false));
         }
         return list;
     }
@@ -91,7 +90,7 @@ public class DealViewModel extends ViewModel {
         if (current != null) {
             for (Category item : current) {
                 boolean isSelected = item.getDescription().equals(selected.getDescription());
-                newList.add(new Category(item.getDescription(), isSelected));
+                newList.add(new Category(item.getId(), item.getDescription(), isSelected));
             }
         }
         return newList;

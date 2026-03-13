@@ -8,7 +8,7 @@
     app:shapeAppearance="?attr/shapeAppearanceCornerLarge">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="12dp">
 
@@ -32,6 +32,7 @@
                 app:tint="?attr/colorPrimary" />
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Badge de quantidade -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cartaoQuantidadeVeiculos"
             style="?attr/materialCardViewFilledStyle"
@@ -51,12 +52,12 @@
                 android:textAppearance="?attr/textAppearanceLabelSmall"
                 android:textColor="?attr/colorOnPrimaryContainer"
                 android:textStyle="bold"
-                tools:text="0 veículos" />
+                tools:text="@plurals/quantidade_veiculos" />
         </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:id="@+id/textoTipoVeiculo"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:textAppearance="?attr/textAppearanceBodyMedium"
@@ -68,18 +69,43 @@
 
         <TextView
             android:id="@+id/textoCapacidadeCabecas"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:alpha="0.7"
+            android:text="@string/capacidade_cabecas"
             android:textAllCaps="true"
+            android:textAppearance="?attr/textAppearanceBodySmall"
             android:textColor="?attr/colorOnPrimaryContainer"
             android:textSize="10sp"
-            android:alpha="0.7"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textoTipoVeiculo"
-            android:text="@string/capacidade_cabecas" />
+            app:layout_constraintTop_toBottomOf="@+id/textoTipoVeiculo" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cartaoPorcentagem"
+            style="?attr/materialCardViewFilledStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            app:cardBackgroundColor="?attr/colorSecondaryContainer"
+            app:layout_constraintBottom_toBottomOf="@+id/textoCapacidadeCabecas"
+            app:layout_constraintStart_toEndOf="@+id/textoCapacidadeCabecas"
+            app:layout_constraintTop_toTopOf="@+id/textoCapacidadeCabecas"
+            app:shapeAppearance="?attr/shapeAppearanceCornerLarge">
+
+            <TextView
+                android:id="@+id/textoPorcentagemOcupada"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="2dp"
+                android:text="@string/percent"
+                android:textAppearance="?attr/textAppearanceLabelSmall"
+                android:textColor="?attr/colorOnSecondaryContainer"
+                android:textSize="9sp"
+                android:textStyle="bold" />
+        </com.google.android.material.card.MaterialCardView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

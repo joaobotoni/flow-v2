@@ -8,18 +8,21 @@ import androidx.annotation.NonNull;
 import java.util.Objects;
 
 public class Category implements Parcelable {
+
+    private long id;
     private String description;
     private boolean check;
-
     public Category() {
     }
 
-    public Category(String description, boolean check) {
+    public Category(long id, String description, boolean check) {
+        this.id = id;
         this.description = description;
         this.check = check;
     }
 
     protected Category(Parcel in) {
+        id = in.readLong();
         description = in.readString();
         check = in.readByte() != 0;
     }
@@ -35,6 +38,14 @@ public class Category implements Parcelable {
             return new Category[size];
         }
     };
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getDescription() {
         return description;
@@ -59,6 +70,7 @@ public class Category implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeLong(id);
         parcel.writeString(description);
         parcel.writeByte((byte) (check ? 1 : 0));
     }
@@ -67,11 +79,11 @@ public class Category implements Parcelable {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Category category = (Category) o;
-        return check == category.check && Objects.equals(description, category.description);
+        return id == category.id && check == category.check && Objects.equals(description, category.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(description, check);
+        return Objects.hash(id, description, check);
     }
 }
