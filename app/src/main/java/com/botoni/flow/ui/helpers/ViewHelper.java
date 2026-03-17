@@ -1,6 +1,7 @@
 package com.botoni.flow.ui.helpers;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -71,5 +72,12 @@ public class ViewHelper {
             }
         }
         textView.setText(context.getString(resId, Arrays.asList(args).toArray()));
+    }
+
+    public static void setVisible(boolean visible, View... views) {
+        int visibility = visible ? View.VISIBLE : View.GONE;
+        for (View view : views) {
+            view.setVisibility(visibility);
+        }
     }
 }

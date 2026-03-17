@@ -2,6 +2,7 @@ package com.botoni.flow.ui.adapters;
 
 import static com.botoni.flow.ui.helpers.ViewHelper.setText;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -11,21 +12,28 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.botoni.flow.databinding.ItemCategoryBinding;
-import com.botoni.flow.domain.entities.Category;
+import com.botoni.flow.data.source.local.entities.CategoriaFrete;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
-public class CategoryAdapter extends ListAdapter<Category, CategoryAdapter.ViewHolder> {
+public class CategoryAdapter extends ListAdapter<CategoriaFrete, CategoryAdapter.ViewHolder> {
 
     public interface OnClickListener {
-        void onClick(Category category);
+        void onClick(CategoriaFrete categoria);
     }
-
     private final OnClickListener listener;
+    private CategoriaFrete selected;
 
     public CategoryAdapter(OnClickListener listener) {
         super(new DiffCallback());
         this.listener = listener;
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void setSelected(CategoriaFrete selected) {
+        this.selected = selected;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -37,7 +45,7 @@ public class CategoryAdapter extends ListAdapter<Category, CategoryAdapter.ViewH
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(getItem(position), listener);
+        holder.bind(getItem(position), selected, listener);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -48,24 +56,22 @@ public class CategoryAdapter extends ListAdapter<Category, CategoryAdapter.ViewH
             this.binding = binding;
         }
 
-        void bind(Category category, OnClickListener listener) {
-            setText(binding.chipText, category.getDescription());
-            binding.chipCard.setChecked(category.isCheck());
-            binding.chipCard.setOnClickListener(v -> listener.onClick(category));
+        void bind(CategoriaFrete categoria, CategoriaFrete selected, OnClickListener listener) {
+            setText(binding.chipText, categoria.getDescricao());
+            binding.chipCard.setChecked(Objects.equals(categoria, selected));
+            binding.chipCard.setOnClickListener(v -> listener.onClick(categoria));
         }
     }
 
-    private static class DiffCallback extends DiffUtil.ItemCallback<Category> {
+    private static class DiffCallback extends DiffUtil.ItemCallback<CategoriaFrete> {
         @Override
-        public boolean areItemsTheSame(@NonNull Category oldItem, @NonNull Category newItem) {
-            return oldItem.getId() == newItem.getId();
+        public boolean areItemsTheSame(@NonNull CategoriaFrete oldItem, @NonNull CategoriaFrete newItem) {
+            return Objects.equals(oldItem, newItem);
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull Category oldItem, @NonNull Category newItem) {
-            return oldItem.getId() == newItem.getId()
-                    && Objects.equals(oldItem.getDescription(), newItem.getDescription())
-                    && oldItem.isCheck() == newItem.isCheck();
+        public boolean areContentsTheSame(@NonNull CategoriaFrete oldItem, @NonNull CategoriaFrete newItem) {
+            return Objects.equals(oldItem, newItem);
         }
     }
 }

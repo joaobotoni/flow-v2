@@ -49,10 +49,11 @@ public class CalfResultFragment extends Fragment {
     }
 
     private void initObservers() {
-        viewModel.getUiState().observe(getViewLifecycleOwner(), this::bindResult);
+        viewModel.getUiState().observe(getViewLifecycleOwner(), this::bind);
     }
 
-    private void bindResult(CalfResultUiState state) {
+    private void bind(CalfResultUiState state) {
+        if (!state.isVisible()) return;
         binding.textoValorPorCabeca.setText(formatCurrency(state.getValorPorCabeca()));
         binding.textoValorPorKg.setText(formatCurrency(state.getValorPorKg()));
         binding.textoValorTotal.setText(formatCurrency(state.getValorTotal()));

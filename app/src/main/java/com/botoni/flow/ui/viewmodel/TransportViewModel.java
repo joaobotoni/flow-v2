@@ -18,8 +18,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class TransportViewModel extends ViewModel {
 
-    private final TransportRepository repository;
     private final TaskHelper taskExecutor;
+    private final TransportRepository repository;
     private final MutableLiveData<TransportUiState> uiState = new MutableLiveData<>(new TransportUiState());
     private final MutableLiveData<Exception> errorEvent = new MutableLiveData<>();
 
@@ -29,10 +29,21 @@ public class TransportViewModel extends ViewModel {
         this.taskExecutor = taskExecutor;
     }
 
+    public void calculate(long category, int quantity) {
+        taskExecutor.execute(
+                () -> setState(category, quantity),
+                uiState::setValue,
+                errorEvent::setValue
+        );
+    }
+    private TransportUiState setState(long category, int quantity) {
+        List<Transport> result = repository.recommend(category, quantity);
+        return new TransportUiState(result, true);
+    }
+
     public LiveData<TransportUiState> getUiState() {
         return uiState;
     }
-
     public LiveData<Exception> getErrorEvent() {
         return errorEvent;
     }

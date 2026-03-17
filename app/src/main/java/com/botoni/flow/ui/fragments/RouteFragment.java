@@ -11,9 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.botoni.flow.databinding.FragmentRouteBinding;
-import com.botoni.flow.ui.adapters.TransportAdapter;
 import com.botoni.flow.ui.state.RouteUiState;
-import com.botoni.flow.ui.viewmodel.FreightViewModel;
 import com.botoni.flow.ui.viewmodel.RouteViewModel;
 
 import java.util.Arrays;
@@ -53,18 +51,30 @@ public class RouteFragment extends Fragment {
     }
 
     private void initObservers() {
-        viewModel.getUiState().observe(getViewLifecycleOwner(), this::bindResult);
+        viewModel.getUiState().observe(getViewLifecycleOwner(), this::bind);
     }
 
-    private void bindResult(RouteUiState state) {
-        String[] origin = parse(state.getPoints().get(0));
-        String[] destination = parse(state.getPoints().get(1));
+    private void bind(RouteUiState state) {
+        if (!state.isVisible()) return;
+        bindOrigin(state.getPoints().get(0));
+        bindDestination(state.getPoints().get(1));
+        bindDistance(state.getDistance());
+    }
 
+    private void bindOrigin(String originPoint) {
+        String[] origin = parse(originPoint);
         binding.textoCidadeOrigem.setText(origin[0]);
         binding.textoEstadoOrigem.setText(origin[1]);
+    }
+
+    private void bindDestination(String destinationPoint) {
+        String[] destination = parse(destinationPoint);
         binding.textoCidadeDestino.setText(destination[0]);
         binding.textoEstadoDestino.setText(destination[1]);
-        binding.textoValorDistancia.setText(String.format(Locale.getDefault(), "%.2f", state.getDistance()));
+    }
+
+    private void bindDistance(double distance) {
+        binding.textoValorDistancia.setText(String.format(Locale.getDefault(), "%.2f", distance));
     }
 
     private String[] parse(String point) {

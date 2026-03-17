@@ -172,7 +172,6 @@
     <string name="btn_incremento_50">+50</string>
     <string name="btn_incremento_100">+100</string>
     <string name="hint_valor_km">Quilometragem</string>
-    <string name="label_frete">Frete</string>
     <string name="label_origin">Origem</string>
     <string name="label_destination">Destino</string>
 
@@ -190,10 +189,11 @@
     <string name="finalizar_rota">Finalizar rota</string>
     <string name="editar">Editar</string>
     <string name="label_rota">ROTA</string>
+    <string name="label_frete">FRETE</string>
+    <string name="label_transporte">TRANSPORTE</string>
     <string name="action_open_sheet">Ver frete</string>
     <string name="action_next">Prosseguir</string>
     <string name="erro_endereco_nao_encontrado">Endereço de destino não encontrado</string>
-    <string name="label_transporte">Transporte</string>
     <string name="capacidade_cabecas">Capacidade: %1$d cabeças</string>
     <plurals name="quantidade_veiculos">
         <item quantity="one">%1$d veículo</item>

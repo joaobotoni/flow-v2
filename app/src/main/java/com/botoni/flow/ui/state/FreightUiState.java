@@ -3,16 +3,16 @@ package com.botoni.flow.ui.state;
 import java.math.BigDecimal;
 
 public class FreightUiState {
-    private BigDecimal valorFretePorAnimal;
     private BigDecimal valorFreteTotal;
+    private BigDecimal valorFretePorAnimal;
     private boolean isVisible;
 
     public FreightUiState() {
     }
 
-    public FreightUiState(BigDecimal valorFretePorAnimal, BigDecimal valorFreteTotal, boolean isVisible) {
-        this.valorFretePorAnimal = valorFretePorAnimal;
+    public FreightUiState(BigDecimal valorFreteTotal, BigDecimal valorFretePorAnimal, boolean isVisible) {
         this.valorFreteTotal = valorFreteTotal;
+        this.valorFretePorAnimal = valorFretePorAnimal;
         this.isVisible = isVisible;
     }
 

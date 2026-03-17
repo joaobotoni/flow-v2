@@ -7,10 +7,8 @@ import java.util.List;
 public class TransportUiState {
     private List<Transport> transports;
     private boolean isVisible;
-
     public TransportUiState() {
     }
-
     public TransportUiState(List<Transport> transports, boolean isVisible) {
         this.transports = transports;
         this.isVisible = isVisible;

@@ -13,11 +13,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.botoni.flow.databinding.FragmentFreightBinding;
-import com.botoni.flow.ui.state.CalfResultUiState;
 import com.botoni.flow.ui.state.FreightUiState;
-import com.botoni.flow.ui.viewmodel.CalfResultViewModel;
 import com.botoni.flow.ui.viewmodel.FreightViewModel;
-import com.botoni.flow.ui.viewmodel.RouteViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -51,11 +48,13 @@ public class FreightFragment extends Fragment {
     private void initViewModel() {
         viewModel = new ViewModelProvider(requireActivity()).get(FreightViewModel.class);
     }
+
     private void initObservers() {
-        viewModel.getUiState().observe(getViewLifecycleOwner(), this::bindResult);
+        viewModel.getUiState().observe(getViewLifecycleOwner(), this::bind);
     }
 
-    private void bindResult(FreightUiState state) {
+    private void bind(FreightUiState state) {
+        if (!state.isVisible()) return;
         binding.textoValorFreteTotal.setText(formatCurrency(state.getValorFreteTotal()));
         binding.textoValorFretePorAnimal.setText(formatCurrency(state.getValorFretePorAnimal()));
     }
