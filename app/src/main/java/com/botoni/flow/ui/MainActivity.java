@@ -6,7 +6,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.botoni.flow.R;
-import com.botoni.flow.ui.fragments.DealFragment;
+import com.botoni.flow.ui.fragments.NegociacaoFragmento;
 
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager()
                     .beginTransaction()
                     .setReorderingAllowed(true)
-                    .replace(R.id.container, DealFragment.class, null)
+                    .replace(R.id.container, NegociacaoFragmento.class, null)
                     .commit();
         }
     }
