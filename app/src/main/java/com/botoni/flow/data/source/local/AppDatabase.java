@@ -85,6 +85,7 @@ public abstract class AppDatabase extends RoomDatabase {
                                     db.execSQL("INSERT INTO xgp_frete (id_tipo_veiculo_frete, km_inicial, km_final, valor) VALUES (1,151,200,1980.00)");
                                     db.execSQL("INSERT INTO xgp_frete (id_tipo_veiculo_frete, km_inicial, km_final, valor) VALUES (1,201,250,2390.00)");
                                     db.execSQL("INSERT INTO xgp_frete (id_tipo_veiculo_frete, km_inicial, km_final, valor) VALUES (1,251,300,2830.00)");
+                                    db.execSQL("INSERT INTO xgp_frete (id_tipo_veiculo_frete, km_inicial, km_final, valor) VALUES (1,300,9999999999999999,9.90)");
 
                                     // CARRETA BAIXA
                                     db.execSQL("INSERT INTO xgp_frete (id_tipo_veiculo_frete, km_inicial, km_final, valor) VALUES (2,0,50,1040.00)");
@@ -94,6 +95,7 @@ public abstract class AppDatabase extends RoomDatabase {
                                     db.execSQL("INSERT INTO xgp_frete (id_tipo_veiculo_frete, km_inicial, km_final, valor) VALUES (2,151,200,2820.00)");
                                     db.execSQL("INSERT INTO xgp_frete (id_tipo_veiculo_frete, km_inicial, km_final, valor) VALUES (2,201,250,3390.00)");
                                     db.execSQL("INSERT INTO xgp_frete (id_tipo_veiculo_frete, km_inicial, km_final, valor) VALUES (2,251,300,3950.00)");
+                                    db.execSQL("INSERT INTO xgp_frete (id_tipo_veiculo_frete, km_inicial, km_final, valor) VALUES (2,300,9999999999999999,13.00)");
 
                                     // CARRETA ALTA
                                     db.execSQL("INSERT INTO xgp_frete (id_tipo_veiculo_frete, km_inicial, km_final, valor) VALUES (3,0,50,1250.00)");
@@ -103,6 +105,7 @@ public abstract class AppDatabase extends RoomDatabase {
                                     db.execSQL("INSERT INTO xgp_frete (id_tipo_veiculo_frete, km_inicial, km_final, valor) VALUES (3,151,200,3500.00)");
                                     db.execSQL("INSERT INTO xgp_frete (id_tipo_veiculo_frete, km_inicial, km_final, valor) VALUES (3,201,250,4100.00)");
                                     db.execSQL("INSERT INTO xgp_frete (id_tipo_veiculo_frete, km_inicial, km_final, valor) VALUES (3,251,300,4700.00)");
+                                    db.execSQL("INSERT INTO xgp_frete (id_tipo_veiculo_frete, km_inicial, km_final, valor) VALUES (3,300,9999999999999999,15.00)");
 
                                     // CARRETA TRES EIXOS
                                     db.execSQL("INSERT INTO xgp_frete (id_tipo_veiculo_frete, km_inicial, km_final, valor) VALUES (4,0,50,1400.00)");
@@ -112,6 +115,7 @@ public abstract class AppDatabase extends RoomDatabase {
                                     db.execSQL("INSERT INTO xgp_frete (id_tipo_veiculo_frete, km_inicial, km_final, valor) VALUES (4,151,200,4100.00)");
                                     db.execSQL("INSERT INTO xgp_frete (id_tipo_veiculo_frete, km_inicial, km_final, valor) VALUES (4,201,250,4700.00)");
                                     db.execSQL("INSERT INTO xgp_frete (id_tipo_veiculo_frete, km_inicial, km_final, valor) VALUES (4,251,300,5300.00)");
+                                    db.execSQL("INSERT INTO xgp_frete (id_tipo_veiculo_frete, km_inicial, km_final, valor) VALUES (4,300,9999999999999999,17.00)");
                                 }
                             }).build();
                 }

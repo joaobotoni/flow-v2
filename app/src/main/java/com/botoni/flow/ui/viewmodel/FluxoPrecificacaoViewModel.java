@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.botoni.flow.data.models.PrecificacaoBezerro;
-import com.botoni.flow.data.models.PrecificacaoFrete;
 import com.botoni.flow.data.models.Rota;
 import com.botoni.flow.data.models.Transporte;
 import com.botoni.flow.data.repositories.CategoriaFreteRepository;
@@ -19,7 +18,6 @@ import com.botoni.flow.ui.helpers.TaskHelper;
 import com.botoni.flow.ui.state.BuscaLocalizacaoUiState;
 import com.botoni.flow.ui.state.CategoriaUiState;
 import com.botoni.flow.ui.state.PrecificacaoBezerroUiState;
-import com.botoni.flow.ui.state.PrecificacaoFreteUiState;
 import com.botoni.flow.ui.state.RotaUiState;
 import com.botoni.flow.ui.state.TransporteUiState;
 
@@ -46,7 +44,6 @@ public class FluxoPrecificacaoViewModel extends ViewModel {
     private final MutableLiveData<BuscaLocalizacaoUiState> buscaLocalizacaoUiStateMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<RotaUiState> rotaUiStateMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<List<TransporteUiState>> listTransporteMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData<PrecificacaoFreteUiState> precificacaoFreteUiStateMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<Exception> error = new MutableLiveData<>(null);
     @Inject
     public FluxoPrecificacaoViewModel(TaskHelper taskHelper, CategoriaFreteRepository categoriaFreteRepository, PrecificacaoBezerroRepository precificacaoBezerroRepository, LocalizacaoRepository localizacaoRepository, FreteRepository freteRepository, TransporteRepository transporteRepository) {
@@ -79,9 +76,7 @@ public class FluxoPrecificacaoViewModel extends ViewModel {
         return listTransporteMutableLiveData;
     }
 
-    public LiveData<PrecificacaoFreteUiState> getPrecificacaoFreteUiStateMutableLiveData() {
-        return precificacaoFreteUiStateMutableLiveData;
-    }
+
 
     public LiveData<Exception> getError() {
         return error;
@@ -171,16 +166,16 @@ public class FluxoPrecificacaoViewModel extends ViewModel {
         );
     }
 
-    public void calcularFrete(List<Transporte> transportes, double distancia, int totalAnimais) {
-        taskHelper.execute(
-                () -> {
-                    PrecificacaoFrete result = freteRepository.calcularFrete(transportes, distancia, totalAnimais);
-                    return new PrecificacaoFreteUiState(result.getValorTotal(), result.getValorPorAnimal());
-                },
-                precificacaoFreteUiStateMutableLiveData::postValue,
-                error::postValue
-        );
-    }
+//    public void calcularFrete(List<Transporte> transportes, double distancia, int totalAnimais) {
+//        taskHelper.execute(
+//                () -> {
+//                    PrecificacaoFrete result = freteRepository.calcularFrete(transportes, distancia, totalAnimais);
+//                    return new PrecificacaoFreteUiState(result.getValorTotal(), result.getValorPorAnimal());
+//                },
+//                precificacaoFreteUiStateMutableLiveData::postValue,
+//                error::postValue
+//        );
+//    }
 
     @Override
     protected void onCleared() {

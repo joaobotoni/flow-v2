@@ -12,7 +12,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.botoni.flow.databinding.FragmentFreteBinding;
-import com.botoni.flow.ui.state.PrecificacaoFreteUiState;
+
+import java.math.BigDecimal;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -40,9 +41,8 @@ public class FreteFragment extends Fragment {
         binding = null;
     }
 
-    private void bind(PrecificacaoFreteUiState state) {
-        if (state == null) return;
-        binding.textoValorFreteTotal.setText(formatCurrency(state.valorTotal));
-        binding.textoValorFretePorAnimal.setText(formatCurrency(state.valorPorAnimal));
+    private void bind(BigDecimal valorTotal) {
+        if (valorTotal == null) return;
+        binding.textoValorFreteTotal.setText(formatCurrency(valorTotal));
     }
 }
