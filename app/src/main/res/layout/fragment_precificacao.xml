@@ -128,30 +128,6 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/layout_container_transporte"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_20"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/campo_valor_frete"
-                tools:layout="@layout/fragment_transporte"
-                tools:visibility="visible" />
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/layout_container_frete"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_20"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layout_container_transporte"
-                tools:layout="@layout/fragment_frete"
-                tools:visibility="visible" />
-
-            <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/layout_container_valores"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -160,10 +136,9 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layout_container_frete"
+                app:layout_constraintTop_toBottomOf="@id/campo_valor_frete"
                 tools:layout="@layout/fragment_result"
                 tools:visibility="visible" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -176,10 +151,10 @@
         android:paddingTop="@dimen/dimen_12"
         android:paddingBottom="@dimen/dimen_20"
         android:visibility="visible"
-        tools:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="gone">
 
         <Button
             android:id="@+id/botao_action_precificacao_frete"

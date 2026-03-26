@@ -14,14 +14,14 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.botoni.flow.databinding.FragmentResultBinding;
 import com.botoni.flow.ui.state.PrecificacaoBezerroUiState;
-import com.botoni.flow.ui.viewmodel.FluxoPrecificacaoViewModel;
+import com.botoni.flow.ui.viewmodel.PrecificacaoBezerroViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class ResultadoFragment extends Fragment {
-
     private FragmentResultBinding binding;
+    private PrecificacaoBezerroViewModel viewModel;
 
     @Nullable
     @Override
@@ -34,8 +34,15 @@ public class ResultadoFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        viewModel = new ViewModelProvider(requireActivity()).get(PrecificacaoBezerroViewModel.class);
+
+        configurarObservadores();
     }
 
+    private void configurarObservadores() {
+        viewModel.getState().observe(getViewLifecycleOwner(), this::bind);
+    }
 
     @Override
     public void onDestroyView() {

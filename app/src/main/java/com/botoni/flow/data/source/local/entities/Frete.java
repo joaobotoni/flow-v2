@@ -11,6 +11,8 @@ public class Frete {
     private Long id;
     @ColumnInfo(name = "id_tipo_veiculo_frete")
     private Long idTipoVeiculoFrete;
+    @ColumnInfo(name = "tipo_cobranca")
+    private int tipoCobranca;
     @ColumnInfo(name = "km_inicial")
     private double kmInicial;
     @ColumnInfo(name = "km_final")
@@ -18,9 +20,10 @@ public class Frete {
     @ColumnInfo(name = "valor")
     private double valor;
 
-    public Frete() {}
-    public Frete(Long idTipoVeiculoFrete, double kmInicial, double kmFinal, double valor) {
+
+    public Frete(Long idTipoVeiculoFrete, int tipoCobranca, double kmInicial, double kmFinal, double valor) {
         this.idTipoVeiculoFrete = idTipoVeiculoFrete;
+        this.tipoCobranca = tipoCobranca;
         this.kmInicial = kmInicial;
         this.kmFinal = kmFinal;
         this.valor = valor;
@@ -64,5 +67,13 @@ public class Frete {
 
     public void setValor(double valor) {
         this.valor = valor;
+    }
+
+    public int getTipoCobranca() {
+        return tipoCobranca;
+    }
+
+    public void setTipoCobranca(int tipoCobranca) {
+        this.tipoCobranca = tipoCobranca;
     }
 }

@@ -1,67 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/dimen_20"
+    android:paddingEnd="@dimen/dimen_20"
+    android:paddingBottom="@dimen/dimen_20">
 
-    <LinearLayout
-        android:id="@+id/bottom"
-        style="@style/Widget.Material3.BottomSheet"
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+        android:layout_height="wrap_content"/>
 
-        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
-            android:id="@+id/drag_handle"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/filledTextField"
+        style="?attr/textInputFilledStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:boxBackgroundColor="?attr/colorSurface"
+        app:boxCornerRadiusBottomEnd="@dimen/dimen_28"
+        app:boxCornerRadiusBottomStart="@dimen/dimen_28"
+        app:boxCornerRadiusTopEnd="@dimen/dimen_28"
+        app:boxCornerRadiusTopStart="@dimen/dimen_28"
+        app:boxStrokeWidth="@dimen/dimen_0"
+        app:boxStrokeWidthFocused="@dimen/dimen_0"
+        app:hintEnabled="false"
+        app:startIconDrawable="@drawable/search_24px">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/textInputEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="?attr/colorSurfaceContainerLow" />
+            android:gravity="center_vertical"
+            android:hint="@string/hint_search"
+            android:inputType="text"
+            android:paddingTop="@dimen/dimen_0"
+            android:paddingBottom="@dimen/dimen_0"/>
 
-        <LinearLayout
-            android:id="@+id/container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="?attr/colorSurfaceContainerLow"
-            android:paddingStart="@dimen/dimen_20"
-            android:paddingEnd="@dimen/dimen_20"
-            android:paddingBottom="@dimen/dimen_20"
-            android:orientation="vertical">
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/filledTextField"
-                style="?attr/textInputFilledStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:boxBackgroundColor="?attr/colorSurface"
-                app:boxCornerRadiusBottomEnd="@dimen/dimen_28"
-                app:boxCornerRadiusBottomStart="@dimen/dimen_28"
-                app:boxCornerRadiusTopEnd="@dimen/dimen_28"
-                app:boxCornerRadiusTopStart="@dimen/dimen_28"
-                app:boxStrokeWidth="@dimen/dimen_0"
-                app:boxStrokeWidthFocused="@dimen/dimen_0"
-                app:hintEnabled="false"
-                app:startIconDrawable="@drawable/search_24px">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/dimen_10"
+        tools:listitem="@layout/item_endereco"/>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/textInputEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:hint="@string/hint_search"
-                    android:inputType="text"
-                    android:paddingTop="@dimen/dimen_0"
-                    android:paddingBottom="@dimen/dimen_0" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/dimen_10"
-                tools:listitem="@layout/item_endereco" />
-        </LinearLayout>
-    </LinearLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

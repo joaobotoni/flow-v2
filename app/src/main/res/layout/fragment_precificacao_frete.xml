@@ -110,7 +110,7 @@
             </LinearLayout>
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cartao_valor_total"
+                android:id="@+id/cartao_explorar_rota"
                 style="?attr/materialCardViewFilledStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -168,7 +168,7 @@
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cartao_valor_total"
+                app:layout_constraintTop_toBottomOf="@id/cartao_explorar_rota"
                 tools:layout="@layout/fragment_rota"
                 tools:visibility="visible" />
 

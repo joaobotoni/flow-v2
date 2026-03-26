@@ -53,26 +53,38 @@ public class FreteRepository {
         dao.deleteAll();
     }
 
-    public PrecificacaoFrete calcularFrete(List<Transporte> transportes, double distancia, BigDecimal valorTotalAnimal) {
+    public PrecificacaoFrete calcularFrete(List<Transporte> transportes, double distancia, int cargaTotal) {
         BigDecimal totalFrete = calcularFreteTotal(transportes, distancia);
-        BigDecimal valorParcial = calcularIncidenciaFretePorAnimal(totalFrete, valorTotalAnimal);
+        BigDecimal valorParcial = calcularIncidenciaFretePorAnimal(totalFrete, cargaTotal);
         return new PrecificacaoFrete(totalFrete, valorParcial);
     }
 
     public BigDecimal calcularFreteTotal(List<Transporte> transportes, double distancia) {
         BigDecimal total = BigDecimal.ZERO;
         for (Transporte transporte : transportes) {
-            BigDecimal valorUnitarioVeiculo = buscarPorVeiculoEDistancia(transporte.getId(), distancia)
-                    .map(frete -> BigDecimal.valueOf(frete.getValor()))
-                    .orElse(BigDecimal.ZERO);
-            BigDecimal subtotal = valorUnitarioVeiculo.multiply(BigDecimal.valueOf(transporte.getQuantidade()));
+            Frete frete = buscarPorVeiculoEDistancia(transporte.getId(), distancia)
+                    .orElseThrow(() -> new RuntimeException("Nenhum frete configurado para o veículo: " + transporte.getNomeVeiculo()));
+            BigDecimal custoUnitario = calcularCustoUnitario(frete, distancia);
+            BigDecimal quantidade = BigDecimal.valueOf(transporte.getQuantidade());
+            BigDecimal subtotal = custoUnitario.multiply(quantidade);
             total = total.add(subtotal);
         }
+
         return total.setScale(ESCALA_RESULTADO, RoundingMode.HALF_UP);
     }
 
-    public BigDecimal calcularIncidenciaFretePorAnimal(BigDecimal valorTotalFrete, BigDecimal valorTotalAnimal) {
-        return valorTotalFrete.divide(valorTotalAnimal, ESCALA_CALCULO, RoundingMode.HALF_UP)
+    public BigDecimal calcularIncidenciaFretePorAnimal(BigDecimal valorTotalFrete, int cargaTotal) {
+        BigDecimal quantidadeAnimais = BigDecimal.valueOf(cargaTotal);
+        return valorTotalFrete.divide(quantidadeAnimais, ESCALA_CALCULO, RoundingMode.HALF_UP)
                 .setScale(ESCALA_RESULTADO, RoundingMode.HALF_UP);
+    }
+
+    public BigDecimal calcularCustoUnitario(Frete frete, double distancia) {
+        BigDecimal valorBase = BigDecimal.valueOf(frete.getValor());
+        if (frete.getTipoCobranca() == 1) {
+            BigDecimal multiplicadorDistancia = BigDecimal.valueOf(distancia);
+            return valorBase.multiply(multiplicadorDistancia);
+        }
+        return valorBase;
     }
 }

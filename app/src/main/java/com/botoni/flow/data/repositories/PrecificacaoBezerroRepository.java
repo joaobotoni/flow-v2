@@ -22,7 +22,6 @@ public class PrecificacaoBezerroRepository {
     public PrecificacaoBezerroRepository() {
     }
 
-
     public PrecificacaoBezerro calcularNegociacaoBezerroComDescontoDoFrete(BigDecimal peso, BigDecimal precoPorArroba, BigDecimal percentualAgio, Integer quantidade, BigDecimal valorFrete) {
         BigDecimal valorPorCabeca = calcularValorBezerroComDescontoDoFrete(peso, precoPorArroba, percentualAgio, valorFrete);
         BigDecimal valorPorKg = calcularValorPorKgComDescontoDoFrete(peso, precoPorArroba, percentualAgio, valorFrete);
@@ -38,9 +37,7 @@ public class PrecificacaoBezerroRepository {
 
 
     public BigDecimal calcularValorPorKgComDescontoDoFrete(BigDecimal pesoKg, BigDecimal precoPorArroba, BigDecimal percentualAgio, BigDecimal valorFrete) {
-        return pesoKg.compareTo(BigDecimal.ZERO) == 0
-                ? BigDecimal.ZERO
-                : calcularValorTotalBezerro(pesoKg, precoPorArroba, percentualAgio)
+        return pesoKg.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : calcularValorTotalBezerro(pesoKg, precoPorArroba, percentualAgio)
                 .divide(pesoKg, ESCALA_CALCULO, MODO_ARREDONDAMENTO)
                 .subtract(valorFrete);
     }
@@ -130,17 +127,12 @@ public class PrecificacaoBezerroRepository {
 
     private BigDecimal calcularTaxaPorArrobaRestante(BigDecimal pesoKg, BigDecimal precoPorArroba) {
         BigDecimal restantes = obterArrobasRestantesParaAbate(pesoKg);
-        return restantes.compareTo(BigDecimal.ZERO) == 0
-                ? BigDecimal.ZERO
-                : calcularTotalTaxasAbate(precoPorArroba)
+        return restantes.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : calcularTotalTaxasAbate(precoPorArroba)
                 .divide(restantes, ESCALA_CALCULO, MODO_ARREDONDAMENTO);
     }
 
     private BigDecimal calcularTotalTaxasAbate(BigDecimal precoPorArroba) {
-        return ARROBAS_ABATE_ESPERADAS
-                .multiply(precoPorArroba)
-                .multiply(IMPOSTO_FUNRURAL)
-                .add(TAXA_FIXA_ABATE);
+        return ARROBAS_ABATE_ESPERADAS.multiply(precoPorArroba).multiply(IMPOSTO_FUNRURAL).add(TAXA_FIXA_ABATE);
     }
 
     private BigDecimal obterArrobasRestantesParaAbate(BigDecimal pesoKg) {
@@ -152,21 +144,17 @@ public class PrecificacaoBezerroRepository {
     }
 
     private BigDecimal obterFatorMultiplicadorAgio(BigDecimal percentualAgio) {
-        return CEM.subtract(percentualAgio)
-                .divide(CEM, ESCALA_CALCULO, MODO_ARREDONDAMENTO);
+        return CEM.subtract(percentualAgio).divide(CEM, ESCALA_CALCULO, MODO_ARREDONDAMENTO);
     }
 
     private BigDecimal calcularProximoPesoSuperior(BigDecimal pesoKg) {
-        BigDecimal proximoPeso = arredondarArrobasParaCima(converterKgParaArrobas(pesoKg))
-                .multiply(PESO_ARROBA_KG);
+        BigDecimal proximoPeso = arredondarArrobasParaCima(converterKgParaArrobas(pesoKg)).multiply(PESO_ARROBA_KG);
         return limitarPesoAoPesoBase(proximoPeso);
     }
 
     private BigDecimal arredondarArrobasParaCima(BigDecimal arrobas) {
         BigDecimal arredondado = arrobas.setScale(0, RoundingMode.CEILING);
-        return arredondado.compareTo(arrobas) == 0
-                ? arredondado.add(BigDecimal.ONE)
-                : arredondado;
+        return arredondado.compareTo(arrobas) == 0 ? arredondado.add(BigDecimal.ONE) : arredondado;
     }
 
     private BigDecimal limitarPesoAoPesoBase(BigDecimal pesoKg) {

@@ -13,19 +13,19 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="calcularRota_deveRetornarRotaCorreta()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="calcularFrete_deveRetornarValorDoFrete()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="calculaFreteGenerico_devewRetornarValorfreteGenerico()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="listarCategorias_deveRetornarLista()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="calcularNegociacaoBezerro_deveRetornarValoresCorretos() (1)">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="calcularIncidenciaFrete_DeveRetornarRelacaoEntreCustoFreteEValorDoGado()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="calcularNegociacaoBezerroComDescontoDoFrete_deveRetornarValoresCorretos()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

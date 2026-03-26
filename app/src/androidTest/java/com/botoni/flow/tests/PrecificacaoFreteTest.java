@@ -55,32 +55,41 @@ public class PrecificacaoFreteTest {
 
     @Test
     public void calcularFrete_deveRetornarValorDoFrete() {
-        List<Transporte> transportes = transporteRepository.recomendarTransportes(1L, 20);
-        double distancia = 110.00;
+        int quantidadeCabecas = 100;
+        double distanciaKm = 300.00;
 
-        BigDecimal valorTotalFrete = freteRepository.calcularFreteTotal(transportes, distancia);
-        System.out.println("RESULTADO DO FRETE");
-        System.out.println("Transportes: " + transportes.size());
+        List<Transporte> transportes = transporteRepository.recomendarTransportes(1L, quantidadeCabecas);
+        BigDecimal valorTotalFrete = freteRepository.calcularFreteTotal(transportes, distanciaKm);
+
+        System.out.println("TRANSPORTES");
+        transportes.forEach(t -> System.out.println("- " + t.getQuantidade() + "x " + t.getNomeVeiculo()));
+
+        System.out.println("\nVALOR DO FRETE");
         System.out.println("Valor Calculado: R$ " + formatCurrency(valorTotalFrete));
     }
 
     @Test
-    public void calcularIncidenciaFrete_DeveRetornarRelacaoEntreCustoFreteEValorDoGado(){
+    public void calcularIncidenciaFrete_DeveRetornarRelacaoEntreCustoFreteEValorDoGado() {
         BigDecimal peso = new BigDecimal("300");
         BigDecimal arroba = new BigDecimal("310");
-        BigDecimal percent = new BigDecimal("30");
-        int quantidade = 10;
-        double distancia = 110.00;
-        List<Transporte> transportes = transporteRepository.recomendarTransportes(1L, quantidade);
+        BigDecimal percentual = new BigDecimal("30");
+        int quantidadeCabecas = 100;
+        double distanciaKm = 300.00;
+        int pesoTotal = quantidadeCabecas * peso.intValue();
 
-        PrecificacaoBezerro result = precificacaoBezerroRepository.calcularNegociacaoBezerro(peso, arroba, percent, quantidade);
-        BigDecimal valorTotalFrete = freteRepository.calcularFreteTotal(transportes, distancia);
-        BigDecimal valorIncidenete = freteRepository.calcularIncidenciaFretePorAnimal(valorTotalFrete, result.getValorTotal());
+        List<Transporte> transportes = transporteRepository.recomendarTransportes(1L, quantidadeCabecas);
+        PrecificacaoBezerro bezerro = precificacaoBezerroRepository.calcularNegociacaoBezerro(peso, arroba, percentual, quantidadeCabecas);
+        BigDecimal valorTotalFrete = freteRepository.calcularFreteTotal(transportes, distanciaKm);
+        BigDecimal incidenciaFrete = freteRepository.calcularIncidenciaFretePorAnimal(valorTotalFrete, pesoTotal);
 
-        System.out.println("RESULTADO DO FRETE");
-        System.out.println("Transportes: " + transportes.size());
-        System.out.println("Valor total bezerro: " + formatCurrency(result.getValorTotal()));
-        System.out.println("Valor total frete: " + formatCurrency(valorTotalFrete));
-        System.out.println("Valor Calculado: R$ " + formatCurrency(valorIncidenete));
+        System.out.println("TRANSPORTES (" + transportes.size() + " veículos usados)");
+        transportes.forEach(t -> System.out.println("- " + t.getQuantidade() + "x " + t.getNomeVeiculo()));
+
+        System.out.println("\nRESULTADO DO BEZERRO");
+        System.out.println("Valor total bezerro: R$ " + formatCurrency(bezerro.getValorTotal()));
+
+        System.out.println("\nRESULTADO DO FRETE");
+        System.out.println("Valor total frete: R$ " + formatCurrency(valorTotalFrete));
+        System.out.println("Valor da Incidência: R$ " + formatCurrency(incidenciaFrete));
     }
 }

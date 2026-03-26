@@ -16,6 +16,7 @@ import com.botoni.flow.R;
 import com.botoni.flow.databinding.ItemTransporteBinding;
 import com.botoni.flow.ui.state.TransporteUiState;
 
+import java.util.List;
 import java.util.Objects;
 
 public class TransporteAdapter extends ListAdapter<TransporteUiState, TransporteAdapter.ViewHolder> {
@@ -34,12 +35,21 @@ public class TransporteAdapter extends ListAdapter<TransporteUiState, Transporte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.bind(getItem(position));
+        holder.applyLayoutForDisplayMode(getItemCount() == 1);
     }
 
     @Override
     public void onViewAttachedToWindow(@NonNull ViewHolder holder) {
         super.onViewAttachedToWindow(holder);
         holder.applyLayoutForDisplayMode(getItemCount() == 1);
+    }
+
+    @Override
+    public void onCurrentListChanged(@NonNull List<TransporteUiState> previousList,
+                                     @NonNull List<TransporteUiState> currentList) {
+        super.onCurrentListChanged(previousList, currentList);
+        boolean tamanhoMudou = (previousList.size() == 1) != (currentList.size() == 1);
+        if (tamanhoMudou) notifyItemRangeChanged(0, currentList.size());
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
