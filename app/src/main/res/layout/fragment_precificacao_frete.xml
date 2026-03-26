@@ -110,53 +110,88 @@
             </LinearLayout>
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cartao_explorar_rota"
                 style="?attr/materialCardViewFilledStyle"
+                android:id="@+id/cartao_explorar_rota"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
                 app:cardBackgroundColor="?attr/colorPrimaryContainer"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divisor_ou"
-                app:shapeAppearance="?attr/shapeAppearanceCornerLarge">
+                app:shapeAppearance="?attr/shapeAppearanceCornerExtraExtraLarge"
+                app:layout_constraintTop_toBottomOf="@id/divisor_ou">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="20dp">
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="18dp">
+
+                    <com.google.android.material.card.MaterialCardView
+                        style="?attr/materialCardViewFilledStyle"
+                        android:id="@+id/fundo_icone_cartao"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        app:shapeAppearance="?attr/shapeAppearanceCornerExtraExtraLarge"
+                        app:cardBackgroundColor="?attr/colorPrimary"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:id="@+id/imagem_icone_cartao"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="center"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/touch_app_24px"
+                            app:tint="?attr/colorOnPrimary" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/seta_explorar"
+                        app:layout_constraintStart_toEndOf="@id/fundo_icone_cartao"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_explorar_rotas"
+                            android:textColor="?attr/colorOnPrimaryContainer"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Selecione origem"
+                            android:textColor="?attr/colorOnPrimaryContainer"
+                            android:textSize="12sp"
+                            android:alpha="0.65" />
+
+                    </LinearLayout>
 
                     <ImageView
-                        android:id="@+id/imagem_icone_cartao"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:id="@+id/seta_explorar"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/route_24px"
+                        android:alpha="0.5"
                         android:importantForAccessibility="no"
-                        android:src="@drawable/touch_app_24px"
-                        app:layout_constraintBottom_toBottomOf="parent"
-
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:tint="?attr/colorOnPrimaryContainer" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:alpha="0.7"
-                        android:gravity="center"
-                        android:text="@string/label_explorar_rotas"
-                        android:textAllCaps="true"
-                        android:textColor="?attr/colorOnPrimaryContainer"
-                        android:textSize="@dimen/text_12"
-                        android:textStyle="bold"
+                        app:tint="?attr/colorOnPrimaryContainer"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/imagem_icone_cartao"
                         app:layout_constraintTop_toTopOf="parent" />
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
