@@ -159,7 +159,7 @@ public class PrecificacaoFreteFragment extends Fragment {
         RotaUiState rota = rotaViewModel.getState().getValue();
         List<TransporteUiState> transportes = transporteViewModel.getState().getValue();
         aplicarVisibilidade(rota);
-        tentarCalcularFrete(rota, transportes);
+        processarCalculoFrete(rota, transportes);
     }
 
     private void aplicarVisibilidade(RotaUiState rota) {
@@ -170,7 +170,7 @@ public class PrecificacaoFreteFragment extends Fragment {
         setVisible(mostrarFluxoTransporte, binding.layoutContainerTransporte, binding.layoutContainerFrete);
     }
 
-    private void tentarCalcularFrete(RotaUiState rota, List<TransporteUiState> transportes) {
+    private void processarCalculoFrete(RotaUiState rota, List<TransporteUiState> transportes) {
         PrecificacaoFreteFragmentArgs args = lerArgumentos();
         if (anyEmpty(args, transportes)) return;
         double distancia = resolverDistancia(rota);
