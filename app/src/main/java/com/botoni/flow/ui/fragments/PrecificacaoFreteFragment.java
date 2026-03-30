@@ -14,6 +14,7 @@ import static com.botoni.flow.ui.helpers.ViewHelper.setText;
 import static com.botoni.flow.ui.helpers.ViewHelper.setVisible;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,7 +34,10 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.botoni.flow.R;
 import com.botoni.flow.data.models.Transporte;
 import com.botoni.flow.databinding.FragmentPrecificacaoFreteBinding;
+import com.botoni.flow.ui.mappers.domain.TransporteMapper;
+import com.botoni.flow.ui.mappers.presentation.FreteResumoMapper;
 import com.botoni.flow.ui.state.PrecificacaoFreteUiState;
+import com.botoni.flow.ui.state.ResumoValoresUiState;
 import com.botoni.flow.ui.state.RotaUiState;
 import com.botoni.flow.ui.state.TransporteUiState;
 import com.botoni.flow.ui.viewmodel.PrecificacaoFreteViewModel;
@@ -43,22 +47,28 @@ import com.botoni.flow.ui.viewmodel.TransporteViewModel;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class PrecificacaoFreteFragment extends Fragment {
-
     private static final String[] PERMISSOES_LOCALIZACAO = {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
-
     private FragmentPrecificacaoFreteBinding binding;
     private PrecificacaoFreteViewModel precificacaoViewModel;
     private RotaViewModel rotaViewModel;
     private TransporteViewModel transporteViewModel;
     private ActivityResultLauncher<String[]> permissaoLauncher;
     private TextWatcher distanciaWatcher;
+
+    @Inject
+    FreteResumoMapper freteResumoMapper;
+
+    @Inject
+    TransporteMapper transporteMapper;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -126,7 +136,7 @@ public class PrecificacaoFreteFragment extends Fragment {
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.layout_container_rota, new RotaFragment())
                 .replace(R.id.layout_container_transporte, new TransporteFragment())
-                .replace(R.id.layout_container_frete, new FreteFragment())
+                .replace(R.id.layout_container_frete, new ResumoValoresFragment())
                 .commit();
     }
 
@@ -185,14 +195,11 @@ public class PrecificacaoFreteFragment extends Fragment {
     }
 
     private List<Transporte> mapearTransportes(List<TransporteUiState> uiStates) {
-        return uiStates.stream()
-                .map(t -> new Transporte(
-                        t.getId(),
-                        t.getNomeVeiculo(),
-                        t.getQuantidade(),
-                        t.getCapacidade(),
-                        t.getOcupacao()))
-                .collect(Collectors.toList());
+        return transporteMapper.mapTo(uiStates);
+    }
+
+    private ResumoValoresUiState mapearValoresFrete(PrecificacaoFreteUiState freteUiState) {
+        return freteResumoMapper.mapper(freteUiState);
     }
 
     private void confirmarSelecaoFrete() {

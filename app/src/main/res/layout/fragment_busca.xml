@@ -47,5 +47,4 @@
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/dimen_10"
         tools:listitem="@layout/item_endereco"/>
-
 </LinearLayout>

@@ -8,6 +8,8 @@ import com.botoni.flow.data.models.PrecificacaoFrete;
 import com.botoni.flow.data.models.Transporte;
 import com.botoni.flow.data.repositories.FreteRepository;
 import com.botoni.flow.ui.helpers.TaskHelper;
+import com.botoni.flow.ui.mappers.domain.PrecificacaoBezerroMapper;
+import com.botoni.flow.ui.mappers.domain.PrecificacaoFreteMapper;
 import com.botoni.flow.ui.state.PrecificacaoFreteUiState;
 
 import java.math.BigDecimal;
@@ -19,7 +21,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 
 @HiltViewModel
 public class PrecificacaoFreteViewModel extends ViewModel {
-
     private final FreteRepository repositorio;
     private final TaskHelper taskHelper;
     private final MutableLiveData<PrecificacaoFreteUiState> state = new MutableLiveData<>();
@@ -27,11 +28,12 @@ public class PrecificacaoFreteViewModel extends ViewModel {
     private final MutableLiveData<BigDecimal> freteSelecionado = new MutableLiveData<>();
     private final MutableLiveData<Throwable> error = new MutableLiveData<>();
     private final MutableLiveData<Double> distanciaManual = new MutableLiveData<>();
-
+    private final PrecificacaoFreteMapper precificacaoFreteMapper;
     @Inject
-    public PrecificacaoFreteViewModel(TaskHelper taskHelper, FreteRepository repositorio) {
+    public PrecificacaoFreteViewModel(TaskHelper taskHelper, FreteRepository repositorio, PrecificacaoFreteMapper precificacaoFreteMapper) {
         this.repositorio = repositorio;
         this.taskHelper = taskHelper;
+        this.precificacaoFreteMapper = precificacaoFreteMapper;
     }
 
     public LiveData<PrecificacaoFreteUiState> getState() { return state; }
@@ -54,10 +56,8 @@ public class PrecificacaoFreteViewModel extends ViewModel {
 
     public void calcularFrete(List<Transporte> transportes, double distancia, int cargaTotal) {
         taskHelper.execute(
-                () -> {
-                    PrecificacaoFrete result = repositorio.calcularFrete(transportes, distancia, cargaTotal);
-                    return new PrecificacaoFreteUiState(result.getValorTotal(), result.getValorParcial());
-                },
+                () -> precificacaoFreteMapper
+                        .mapFrom(repositorio.calcularFrete(transportes, distancia, cargaTotal)),
                 state::postValue,
                 error::postValue
         );

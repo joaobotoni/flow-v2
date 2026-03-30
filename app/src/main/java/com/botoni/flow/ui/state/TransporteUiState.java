@@ -30,8 +30,6 @@ public class TransporteUiState {
     public int getCapacidade() {
         return capacidade;
     }
-
-
     public int getOcupacao() {
         return ocupacao;
     }

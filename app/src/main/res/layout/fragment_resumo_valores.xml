@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+   >
+
+    <LinearLayout
+        android:id="@+id/layout_divisor_titulo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0.5dp"
+            android:layout_weight="1"
+            android:background="?attr/colorOutline" />
+
+        <TextView
+            android:id="@+id/texto_titulo_secao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:letterSpacing="0.1"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textAllCaps="true"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Resultados" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0.5dp"
+            android:layout_weight="1"
+            android:background="?attr/colorOutline" />
+    </LinearLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_principal"
+        style="?attr/materialCardViewFilledStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dimen_16"
+        android:layout_marginEnd="@dimen/dimen_4"
+        app:cardBackgroundColor="?attr/colorPrimaryContainer"
+        app:layout_constraintEnd_toStartOf="@+id/card_secundario"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_divisor_titulo"
+        app:shapeAppearance="?attr/shapeAppearanceCornerLarge">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dimen_16">
+
+            <TextView
+                android:id="@+id/texto_rotulo_principal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0.8"
+                android:textAllCaps="true"
+                android:textColor="?attr/colorOnPrimaryContainer"
+                android:textSize="@dimen/text_10"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Rótulo Principal" />
+
+            <TextView
+                android:id="@+id/texto_moeda_principal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/currency_symbol"
+                android:textColor="?attr/colorOnPrimaryContainer"
+                android:textSize="@dimen/text_14"
+                app:layout_constraintBottom_toBottomOf="@id/texto_valor_principal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/texto_valor_principal"
+                app:layout_constraintVertical_bias="0.7" />
+
+            <TextView
+                android:id="@+id/texto_valor_principal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dimen_4"
+                android:layout_marginTop="@dimen/dimen_4"
+                android:textColor="?attr/colorOnPrimaryContainer"
+                android:textSize="@dimen/text_22"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/texto_moeda_principal"
+                app:layout_constraintTop_toBottomOf="@id/texto_rotulo_principal"
+                tools:text="0,00" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_secundario"
+        style="?attr/materialCardViewFilledStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dimen_4"
+        android:layout_marginTop="@dimen/dimen_16"
+        app:cardBackgroundColor="?attr/colorSurfaceContainerHigh"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/card_principal"
+        app:layout_constraintTop_toBottomOf="@id/layout_divisor_titulo"
+        app:shapeAppearance="?attr/shapeAppearanceCornerLarge">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dimen_16">
+
+            <TextView
+                android:id="@+id/texto_rotulo_secundario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0.7"
+                android:textAllCaps="true"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="@dimen/text_10"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Rótulo Secundário" />
+
+            <TextView
+                android:id="@+id/texto_moeda_secundario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/currency_symbol"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="@dimen/text_14"
+                app:layout_constraintBottom_toBottomOf="@id/texto_valor_secundario"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/texto_valor_secundario"
+                app:layout_constraintVertical_bias="0.7" />
+
+            <TextView
+                android:id="@+id/texto_valor_secundario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dimen_4"
+                android:layout_marginTop="@dimen/dimen_4"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="@dimen/text_22"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/texto_moeda_secundario"
+                app:layout_constraintTop_toBottomOf="@id/texto_rotulo_secundario"
+                tools:text="0,00" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

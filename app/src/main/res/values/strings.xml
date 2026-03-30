@@ -52,7 +52,7 @@
     <string name="card_suffix_head">cabeça</string>
     <string name="card_suffix_kg">kg</string>
     <string name="add_location_label">Adicionar localização</string>
-    <string name="card_label_unit_value_frete">Valor por animal</string>
+    <string name="card_label_unit_value_frete">Valor por kg</string>
     <string name="card_label_unit_total_value_frete">Valor total frete</string>
 
     <!-- Units -->

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.botoni.flow.data.repositories.CategoriaFreteRepository;
 import com.botoni.flow.ui.helpers.TaskHelper;
+import com.botoni.flow.ui.mappers.domain.CategoriaMapper;
 import com.botoni.flow.ui.state.CategoriaUiState;
 
 import java.util.List;
@@ -21,14 +22,18 @@ public class CategoriaViewModel extends ViewModel {
 
     private final CategoriaFreteRepository repositorio;
     private final TaskHelper taskHelper;
+    private final CategoriaMapper mapper;
     private final MutableLiveData<List<CategoriaUiState>> state = new MutableLiveData<>();
     private final MutableLiveData<CategoriaUiState> categoriaSelecionada = new MutableLiveData<>();
     private final MutableLiveData<Throwable> error = new MutableLiveData<>();
 
     @Inject
-    public CategoriaViewModel(CategoriaFreteRepository repositorio, TaskHelper taskHelper) {
+    public CategoriaViewModel(CategoriaFreteRepository repositorio,
+                              TaskHelper taskHelper,
+                              CategoriaMapper mapper) {
         this.repositorio = repositorio;
         this.taskHelper = taskHelper;
+        this.mapper = mapper;
         listar();
     }
 
@@ -61,10 +66,7 @@ public class CategoriaViewModel extends ViewModel {
     private void listar() {
         taskHelper.execute(
                 () -> repositorio.getAll().stream()
-                        .map(e -> new CategoriaUiState(
-                                e.getId(),
-                                e.getDescricao(),
-                                false))
+                        .map(mapper::mapFrom)
                         .collect(Collectors.toList()),
                 state::postValue,
                 error::postValue

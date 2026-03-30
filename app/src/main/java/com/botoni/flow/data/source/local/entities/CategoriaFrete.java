@@ -14,6 +14,11 @@ public class CategoriaFrete {
     private String descricao;
     public CategoriaFrete() {}
 
+    public CategoriaFrete(Long id, String descricao) {
+        this.id = id;
+        this.descricao = descricao;
+    }
+
     public CategoriaFrete(String descricao) {
         this.descricao = descricao;
     }

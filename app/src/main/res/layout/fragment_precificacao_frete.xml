@@ -229,7 +229,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/layout_container_transporte"
-                tools:layout="@layout/fragment_frete"
+                tools:layout="@layout/fragment_resumo_valores"
                 tools:visibility="visible" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

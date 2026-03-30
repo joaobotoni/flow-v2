@@ -6,10 +6,10 @@ import androidx.lifecycle.ViewModel;
 
 import com.botoni.flow.data.repositories.TransporteRepository;
 import com.botoni.flow.ui.helpers.TaskHelper;
+import com.botoni.flow.ui.mappers.domain.TransporteMapper;
 import com.botoni.flow.ui.state.TransporteUiState;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -17,17 +17,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 
 @HiltViewModel
 public class TransporteViewModel extends ViewModel {
-
     private final TransporteRepository repositorio;
     private final TaskHelper taskHelper;
-
     private final MutableLiveData<List<TransporteUiState>> state = new MutableLiveData<>();
     private final MutableLiveData<Throwable> error = new MutableLiveData<>();
+    private final TransporteMapper transporteMapper;
 
     @Inject
-    public TransporteViewModel(TransporteRepository repositorio, TaskHelper taskHelper) {
+    public TransporteViewModel(TransporteRepository repositorio, TaskHelper taskHelper, TransporteMapper transporteMapper) {
         this.repositorio = repositorio;
         this.taskHelper = taskHelper;
+        this.transporteMapper = transporteMapper;
     }
 
     public LiveData<List<TransporteUiState>> getState() {
@@ -40,15 +40,8 @@ public class TransporteViewModel extends ViewModel {
 
     public void recomendar(long categoria, int quantidade) {
         taskHelper.execute(
-                () -> repositorio.recomendarTransportes(categoria, quantidade)
-                        .stream()
-                        .map(t -> new TransporteUiState(
-                                t.getId(),
-                                t.getNomeVeiculo(),
-                                t.getQuantidade(),
-                                t.getCapacidade(),
-                                t.getOcupacao()))
-                        .collect(Collectors.toList()),
+                () -> transporteMapper
+                        .mapFrom(repositorio.recomendarTransportes(categoria, quantidade)),
                 state::postValue,
                 error::postValue
         );
