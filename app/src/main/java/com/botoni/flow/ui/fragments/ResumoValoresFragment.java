@@ -13,17 +13,31 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.botoni.flow.databinding.FragmentResumoValoresBinding;
-import com.botoni.flow.ui.state.PrecificacaoFreteUiState;
 import com.botoni.flow.ui.state.ResumoValoresUiState;
-import com.botoni.flow.ui.viewmodel.PrecificacaoFreteViewModel;
 import com.botoni.flow.ui.viewmodel.ResumoValoresViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class ResumoValoresFragment extends Fragment {
+    private static final String ARG_CHAVE = "chave";
+    private static final String ARG_TITULO = "titulo";
+    private static final String ARG_ROTULO_PRINCIPAL = "rotuloPrincipal";
+    private static final String ARG_ROTULO_SECUNDARIO = "rotuloSecundario";
     private FragmentResumoValoresBinding binding;
     private ResumoValoresViewModel viewModel;
+
+    public static ResumoValoresFragment newInstance(String chave, String titulo,
+                                                    String rotuloPrincipal, String rotuloSecundario) {
+        ResumoValoresFragment fragment = new ResumoValoresFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_CHAVE, chave);
+        args.putString(ARG_TITULO, titulo);
+        args.putString(ARG_ROTULO_PRINCIPAL, rotuloPrincipal);
+        args.putString(ARG_ROTULO_SECUNDARIO, rotuloSecundario);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
@@ -36,18 +50,33 @@ public class ResumoValoresFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        viewModel = new ViewModelProvider(requireActivity()).get(ResumoValoresViewModel.class);
+        inicializarViewModel();
+        aplicarRotulos();
         configurarObservadores();
-    }
-
-    private void configurarObservadores() {
-        viewModel.getState().observe(getViewLifecycleOwner(), this::bind);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void inicializarViewModel() {
+        String chave = requireArguments().getString(ARG_CHAVE);
+        if (chave != null) {
+            viewModel = new ViewModelProvider(requireActivity()).get(chave, ResumoValoresViewModel.class);
+        }
+    }
+
+    private void aplicarRotulos() {
+        Bundle args = requireArguments();
+        binding.textoTituloSecao.setText(args.getString(ARG_TITULO));
+        binding.textoRotuloPrincipal.setText(args.getString(ARG_ROTULO_PRINCIPAL));
+        binding.textoRotuloSecundario.setText(args.getString(ARG_ROTULO_SECUNDARIO));
+    }
+
+    private void configurarObservadores() {
+        viewModel.getState().observe(getViewLifecycleOwner(), this::bind);
     }
 
     private void bind(ResumoValoresUiState state) {

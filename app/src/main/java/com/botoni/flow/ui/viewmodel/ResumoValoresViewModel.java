@@ -4,6 +4,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.botoni.flow.ui.state.ResumoValoresUiState;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+
 public class ResumoValoresViewModel extends ViewModel {
     private final MutableLiveData<ResumoValoresUiState> state = new MutableLiveData<>();
 

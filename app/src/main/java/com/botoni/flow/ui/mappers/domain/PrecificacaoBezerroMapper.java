@@ -4,7 +4,14 @@ import com.botoni.flow.data.models.PrecificacaoBezerro;
 import com.botoni.flow.ui.mappers.BiMapper;
 import com.botoni.flow.ui.state.PrecificacaoBezerroUiState;
 
+import javax.inject.Inject;
+
 public class PrecificacaoBezerroMapper implements BiMapper<PrecificacaoBezerroUiState, PrecificacaoBezerro> {
+
+    @Inject
+    public PrecificacaoBezerroMapper() {
+    }
+
     @Override
     public PrecificacaoBezerro mapTo(PrecificacaoBezerroUiState precificacaoBezerroUiState) {
         return new PrecificacaoBezerro(

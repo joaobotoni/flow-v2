@@ -22,7 +22,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.botoni.flow.R;
-import com.botoni.flow.databinding.FragmentSearchBinding;
+import com.botoni.flow.databinding.FragmentBuscaBinding;
 import com.botoni.flow.ui.adapters.LocationAdapter;
 import com.botoni.flow.ui.state.BuscaLocalizacaoUiState;
 import com.botoni.flow.ui.viewmodel.BuscaViewModel;
@@ -36,7 +36,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class BuscaLocalizacaoFragment extends BottomSheetDialogFragment {
-    private FragmentSearchBinding binding;
+    private FragmentBuscaBinding binding;
     private BuscaViewModel buscaViewModel;
     private RotaViewModel rotaViewModel;
     private FusedLocationProviderClient fusedClient;
@@ -61,7 +61,7 @@ public class BuscaLocalizacaoFragment extends BottomSheetDialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = FragmentSearchBinding.inflate(inflater, container, false);
+        binding = FragmentBuscaBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 

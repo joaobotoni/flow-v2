@@ -18,14 +18,18 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 
 @HiltViewModel
 public class PrecificacaoBezerroViewModel extends ViewModel {
+
     private final PrecificacaoBezerroRepository repositorio;
     private final TaskHelper taskHelper;
-    private final MutableLiveData<PrecificacaoBezerroUiState> state = new MutableLiveData<>();
-    private final MutableLiveData<Throwable> error = new MutableLiveData<>();
     private final PrecificacaoBezerroMapper precificacaoBezerroMapper;
+    private final MutableLiveData<PrecificacaoBezerroUiState> state = new MutableLiveData<>();
+    private final MutableLiveData<PrecificacaoBezerroUiState> stateComFrete = new MutableLiveData<>();
+    private final MutableLiveData<Throwable> error = new MutableLiveData<>();
 
     @Inject
-    public PrecificacaoBezerroViewModel(PrecificacaoBezerroRepository repositorio, TaskHelper taskHelper, PrecificacaoBezerroMapper precificacaoBezerroMapper) {
+    public PrecificacaoBezerroViewModel(PrecificacaoBezerroRepository repositorio,
+                                        TaskHelper taskHelper,
+                                        PrecificacaoBezerroMapper precificacaoBezerroMapper) {
         this.repositorio = repositorio;
         this.taskHelper = taskHelper;
         this.precificacaoBezerroMapper = precificacaoBezerroMapper;
@@ -35,30 +39,38 @@ public class PrecificacaoBezerroViewModel extends ViewModel {
         return state;
     }
 
+    public LiveData<PrecificacaoBezerroUiState> getStateComFrete() {
+        return stateComFrete;
+    }
+
     public LiveData<Throwable> getError() {
         return error;
     }
 
-    public void calcularNegociacao(BigDecimal peso, BigDecimal arroba, BigDecimal percent, Integer quantidade) {
+    public void calcularNegociacao(BigDecimal peso, BigDecimal arroba,
+                                   BigDecimal percent, Integer quantidade) {
         taskHelper.execute(
-                () -> precificacaoBezerroMapper.
-                        mapFrom(repositorio.calcularNegociacaoBezerro(peso, arroba, percent, quantidade)),
+                () -> precificacaoBezerroMapper
+                        .mapFrom(repositorio.calcularNegociacaoBezerro(peso, arroba, percent, quantidade)),
                 state::postValue,
                 error::postValue
         );
     }
 
-    public void calcularNegociacaoBezerroComDescontoDoFrete(BigDecimal peso, BigDecimal arroba, BigDecimal percent, Integer quantidade,
-                                                            BigDecimal valorIncidenteFrete) {
+    public void calcularNegociacaoComDescontoDoFrete(BigDecimal peso, BigDecimal arroba,
+                                                     BigDecimal percent, Integer quantidade,
+                                                     BigDecimal valorIncidenteFrete) {
         taskHelper.execute(
                 () -> precificacaoBezerroMapper
-                        .mapFrom(repositorio.calcularNegociacaoBezerroComDescontoDoFrete(peso, arroba, percent, quantidade, valorIncidenteFrete)),
-                state::postValue,
+                        .mapFrom(repositorio.calcularNegociacaoBezerroComDescontoDoFrete(
+                                peso, arroba, percent, quantidade, valorIncidenteFrete)),
+                stateComFrete::postValue,
                 error::postValue
         );
     }
 
     public void limpar() {
         state.setValue(null);
+        stateComFrete.setValue(null);
     }
 }

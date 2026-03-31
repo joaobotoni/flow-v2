@@ -13,6 +13,6 @@ public class FreteResumoMapper implements Mapper<PrecificacaoFreteUiState, Resum
 
     @Override
     public ResumoValoresUiState mapper(PrecificacaoFreteUiState state) {
-        return new ResumoValoresUiState(state.getValorParcial(), state.getValorParcial());
+        return new ResumoValoresUiState(state.getValorTotal(), state.getValorParcial());
     }
 }

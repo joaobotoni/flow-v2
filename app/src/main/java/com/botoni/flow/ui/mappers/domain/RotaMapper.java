@@ -4,7 +4,14 @@ import com.botoni.flow.data.models.Rota;
 import com.botoni.flow.ui.mappers.BiMapper;
 import com.botoni.flow.ui.state.RotaUiState;
 
+import javax.inject.Inject;
+
 public class RotaMapper implements BiMapper<RotaUiState, Rota> {
+
+    @Inject
+    public RotaMapper() {
+    }
+
     @Override
     public Rota mapTo(RotaUiState rotaUiState) {
         return new Rota(

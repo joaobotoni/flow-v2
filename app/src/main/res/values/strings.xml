@@ -54,6 +54,11 @@
     <string name="add_location_label">Adicionar localização</string>
     <string name="card_label_unit_value_frete">Valor por kg</string>
     <string name="card_label_unit_total_value_frete">Valor total frete</string>
+    <string name="titulo_resumo_bezerro">Valores do Bezerro</string>
+    <string name="titulo_resumo_frete">Valor do Frete</string>
+    <string name="titulo_resumo_com_frete">Valores Finais</string>
+    <string name="rotulo_valor_final_por_cabeca">Valor por cabeça</string>
+    <string name="rotulo_valor_final_por_kg">Valor por kg</string>
 
     <!-- Units -->
     <string name="unit_kg">kg</string>

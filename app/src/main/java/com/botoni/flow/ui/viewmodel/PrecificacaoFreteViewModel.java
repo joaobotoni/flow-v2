@@ -4,11 +4,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.botoni.flow.data.models.PrecificacaoFrete;
 import com.botoni.flow.data.models.Transporte;
 import com.botoni.flow.data.repositories.FreteRepository;
 import com.botoni.flow.ui.helpers.TaskHelper;
-import com.botoni.flow.ui.mappers.domain.PrecificacaoBezerroMapper;
 import com.botoni.flow.ui.mappers.domain.PrecificacaoFreteMapper;
 import com.botoni.flow.ui.state.PrecificacaoFreteUiState;
 
@@ -29,6 +27,7 @@ public class PrecificacaoFreteViewModel extends ViewModel {
     private final MutableLiveData<Throwable> error = new MutableLiveData<>();
     private final MutableLiveData<Double> distanciaManual = new MutableLiveData<>();
     private final PrecificacaoFreteMapper precificacaoFreteMapper;
+
     @Inject
     public PrecificacaoFreteViewModel(TaskHelper taskHelper, FreteRepository repositorio, PrecificacaoFreteMapper precificacaoFreteMapper) {
         this.repositorio = repositorio;
@@ -50,14 +49,9 @@ public class PrecificacaoFreteViewModel extends ViewModel {
         freteSelecionado.setValue(valor);
     }
 
-    public void consumirFreteSelecionado() {
-        freteSelecionado.setValue(null);
-    }
-
     public void calcularFrete(List<Transporte> transportes, double distancia, int cargaTotal) {
         taskHelper.execute(
-                () -> precificacaoFreteMapper
-                        .mapFrom(repositorio.calcularFrete(transportes, distancia, cargaTotal)),
+                () -> precificacaoFreteMapper.mapFrom(repositorio.calcularFrete(transportes, distancia, cargaTotal)),
                 state::postValue,
                 error::postValue
         );
@@ -66,7 +60,10 @@ public class PrecificacaoFreteViewModel extends ViewModel {
     public void calcularIncidencia(BigDecimal valorDoFrete, int totalCarga) {
         taskHelper.execute(
                 () -> repositorio.calcularIncidenciaFretePorAnimal(valorDoFrete, totalCarga),
-                incidencia::postValue,
+                resultadoIncidencia -> {
+                    incidencia.postValue(resultadoIncidencia);
+                    state.postValue(new PrecificacaoFreteUiState(valorDoFrete, resultadoIncidencia));
+                },
                 error::postValue
         );
     }
