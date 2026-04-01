@@ -21,32 +21,40 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 public class PrecificacaoFreteViewModel extends ViewModel {
     private final FreteRepository repositorio;
     private final TaskHelper taskHelper;
+    private final PrecificacaoFreteMapper precificacaoFreteMapper;
     private final MutableLiveData<PrecificacaoFreteUiState> state = new MutableLiveData<>();
     private final MutableLiveData<BigDecimal> incidencia = new MutableLiveData<>();
-    private final MutableLiveData<BigDecimal> freteSelecionado = new MutableLiveData<>();
+    private final MutableLiveData<Double> distancia = new MutableLiveData<>();
     private final MutableLiveData<Throwable> error = new MutableLiveData<>();
-    private final MutableLiveData<Double> distanciaManual = new MutableLiveData<>();
-    private final PrecificacaoFreteMapper precificacaoFreteMapper;
 
     @Inject
-    public PrecificacaoFreteViewModel(TaskHelper taskHelper, FreteRepository repositorio, PrecificacaoFreteMapper precificacaoFreteMapper) {
-        this.repositorio = repositorio;
+    public PrecificacaoFreteViewModel(
+            TaskHelper taskHelper,
+            FreteRepository repositorio,
+            PrecificacaoFreteMapper precificacaoFreteMapper
+    ) {
         this.taskHelper = taskHelper;
+        this.repositorio = repositorio;
         this.precificacaoFreteMapper = precificacaoFreteMapper;
     }
 
-    public LiveData<PrecificacaoFreteUiState> getState() { return state; }
-    public LiveData<BigDecimal> getIncidencia() { return incidencia; }
-    public LiveData<BigDecimal> getFreteSelecionado() { return freteSelecionado; }
-    public LiveData<Throwable> getError() { return error; }
-    public LiveData<Double> getDistanciaManual() { return distanciaManual; }
-
-    public void setDistanciaManual(double distancia) {
-        distanciaManual.setValue(distancia);
+    public LiveData<PrecificacaoFreteUiState> getState() {
+        return state;
     }
 
-    public void selecionarFrete(BigDecimal valor) {
-        freteSelecionado.setValue(valor);
+    public LiveData<BigDecimal> getIncidencia() {
+        return incidencia;
+    }
+
+    public LiveData<Double> getDistancia() {
+        return distancia;
+    }
+
+    public LiveData<Throwable> getError() {
+        return error;
+    }
+    public void setDistancia(double value) {
+        distancia.setValue(value);
     }
 
     public void calcularFrete(List<Transporte> transportes, double distancia, int cargaTotal) {
@@ -67,7 +75,6 @@ public class PrecificacaoFreteViewModel extends ViewModel {
                 error::postValue
         );
     }
-
     public void limpar() {
         state.setValue(null);
     }

@@ -28,8 +28,6 @@ import com.botoni.flow.ui.helpers.AlertHelper;
 import com.botoni.flow.ui.mappers.presentation.BezerroResumoMapper;
 import com.botoni.flow.ui.mappers.presentation.FreteResumoMapper;
 import com.botoni.flow.ui.state.CategoriaUiState;
-import com.botoni.flow.ui.state.PrecificacaoBezerroUiState;
-import com.botoni.flow.ui.state.PrecificacaoFreteUiState;
 import com.botoni.flow.ui.state.ResumoValoresUiState;
 import com.botoni.flow.ui.viewmodel.CategoriaViewModel;
 import com.botoni.flow.ui.viewmodel.PrecificacaoBezerroViewModel;
@@ -45,15 +43,15 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class PrecificacaoFragment extends Fragment {
+
     private static final BigDecimal VALOR_ARROBA_REFERENCIA = new BigDecimal("310");
     private static final BigDecimal PERCENTUAL_RENDIMENTO_PADRAO = new BigDecimal("30");
     private static final String CHAVE_RESUMO_BEZERRO = "resumo_bezerro";
     private static final String CHAVE_RESUMO_FRETE = "resumo_frete";
     private static final String CHAVE_RESUMO_COM_FRETE = "resumo_com_frete";
-    @Inject
-    BezerroResumoMapper bezerroResumoMapper;
-    @Inject
-    FreteResumoMapper freteResumoMapper;
+
+    @Inject BezerroResumoMapper bezerroResumoMapper;
+    @Inject FreteResumoMapper freteResumoMapper;
 
     private FragmentPrecificacaoBinding binding;
     private TextWatcher camposEntradaWatcher;
@@ -65,9 +63,7 @@ public class PrecificacaoFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentPrecificacaoBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -79,6 +75,7 @@ public class PrecificacaoFragment extends Fragment {
         inicializarFragmentosFilhos();
         inicializarAdapterCategorias();
         configurarListeners();
+        configurarResultadoFrete();
         configurarObservadores();
     }
 
@@ -98,26 +95,10 @@ public class PrecificacaoFragment extends Fragment {
 
     private void inicializarFragmentosFilhos() {
         getChildFragmentManager().beginTransaction()
-                .replace(R.id.layout_container_valor_frete, criarFragmentoResumoFrete())
-                .replace(R.id.layout_container_valor_com_frete, criarFragmentoResumoComFrete())
+                .replace(R.id.layout_container_valor_frete, criarResumoFrete())
+                .replace(R.id.layout_container_valor_com_frete, criarResumoComFrete())
                 .replace(R.id.layout_container_valor_total_final, new ResultadoFragment())
                 .commit();
-    }
-
-    private ResumoValoresFragment criarFragmentoResumoFrete() {
-        return ResumoValoresFragment.newInstance(
-                CHAVE_RESUMO_FRETE,
-                getString(R.string.titulo_resumo_frete),
-                getString(R.string.card_label_total_value),
-                getString(R.string.card_label_unit_value_frete));
-    }
-
-    private ResumoValoresFragment criarFragmentoResumoComFrete() {
-        return ResumoValoresFragment.newInstance(
-                CHAVE_RESUMO_COM_FRETE,
-                getString(R.string.titulo_resumo_com_frete),
-                getString(R.string.rotulo_valor_final_por_cabeca),
-                getString(R.string.rotulo_valor_final_por_kg));
     }
 
     private void inicializarAdapterCategorias() {
@@ -130,18 +111,47 @@ public class PrecificacaoFragment extends Fragment {
         binding.entradaTextoPesoAnimal.addTextChangedListener(camposEntradaWatcher);
         binding.entradaTextoValorFrete.addTextChangedListener(camposEntradaWatcher);
         binding.entradaTextoQuantidadeAnimais.addTextChangedListener(camposEntradaWatcher);
+
         binding.botaoActionPrecificacaoFrete.setOnClickListener(v -> navegarParaSelecaoFrete());
     }
 
+    private void configurarResultadoFrete() {
+        getParentFragmentManager().setFragmentResultListener(
+                PrecificacaoFreteFragment.CHAVE_RESULTADO_FRETE,
+                getViewLifecycleOwner(),
+                (key, bundle) -> {
+                    String valorStr = bundle.getString(PrecificacaoFreteFragment.EXTRA_VALOR_FRETE);
+                    if (valorStr == null) return;
+                    aoFreteSelecionado(new BigDecimal(valorStr));
+                }
+        );
+    }
+
     private void configurarObservadores() {
+        observarCategorias();
+        observarFrete();
+        observarBezerro();
+    }
+
+    private void observarCategorias() {
         categoriaViewModel.getState().observe(getViewLifecycleOwner(), categoriaAdapter::submitList);
-        categoriaViewModel.getCategoriaSelecionada().observe(getViewLifecycleOwner(), this::aoCategoriaSelecionada);
-        freteViewModel.getFreteSelecionado().observe(getViewLifecycleOwner(), this::aoFreteSelecionado);
-        freteViewModel.getState().observe(getViewLifecycleOwner(), this::aoStateFreteAtualizado);
+        categoriaViewModel.getCategoriaSelecionada().observe(getViewLifecycleOwner(), this::recomendarTransportesParaCategoria);
+    }
+
+    private void observarFrete() {
+        freteViewModel.getState().observe(getViewLifecycleOwner(), estadoFrete ->
+                obterResumoViewModel(CHAVE_RESUMO_FRETE).setState(isEmpty(estadoFrete) ? null : freteResumoMapper.mapper(estadoFrete)));
         freteViewModel.getIncidencia().observe(getViewLifecycleOwner(), this::aoIncidenciaAtualizada);
-        bezerroViewModel.getState().observe(getViewLifecycleOwner(), this::aoStateBezerroAtualizado);
-        bezerroViewModel.getStateComFrete().observe(getViewLifecycleOwner(), this::aoStateBezerroComFreteAtualizado);
-        obterResumoViewModel(CHAVE_RESUMO_FRETE).getState().observe(getViewLifecycleOwner(), this::aoResumoFreteAtualizado);
+        obterResumoViewModel(CHAVE_RESUMO_FRETE).getState().observe(getViewLifecycleOwner(), estadoResumoFrete ->
+                setVisible(isNotEmpty(estadoResumoFrete), binding.layoutContainerValorFrete));
+    }
+
+    private void observarBezerro() {
+        bezerroViewModel.getState().observe(getViewLifecycleOwner(), estadoBezerro ->
+                obterResumoViewModel(CHAVE_RESUMO_BEZERRO).setState(isEmpty(estadoBezerro) ? null : bezerroResumoMapper.mapper(estadoBezerro)));
+        bezerroViewModel.getStateComFrete().observe(getViewLifecycleOwner(), estadoBezerroComFrete ->
+                obterResumoViewModel(CHAVE_RESUMO_COM_FRETE).setState(isEmpty(estadoBezerroComFrete) ? null : bezerroResumoMapper.mapper(estadoBezerroComFrete)));
+        obterResumoViewModel(CHAVE_RESUMO_BEZERRO).getState().observe(getViewLifecycleOwner(), this::aoResumoBezerroAtualizado);
         obterResumoViewModel(CHAVE_RESUMO_COM_FRETE).getState().observe(getViewLifecycleOwner(), this::aoResumoComFreteAtualizado);
     }
 
@@ -150,135 +160,107 @@ public class PrecificacaoFragment extends Fragment {
         recomendarTransportesParaCategoria(categoriaViewModel.getCategoriaSelecionada().getValue());
 
         if (formularioIncompleto()) {
-            limparResultados();
+            bezerroViewModel.limpar();
+            freteViewModel.limpar();
+            obterResumoViewModel(CHAVE_RESUMO_COM_FRETE).setState(null);
             return;
         }
 
-        calcularNegociacaoBezerro();
-        calcularIncidenciaFrete();
-    }
-
-    private void aoCategoriaSelecionada(CategoriaUiState categoria) {
-        recomendarTransportesParaCategoria(categoria);
+        bezerroViewModel.calcularNegociacao(obterPesoUnitario(), VALOR_ARROBA_REFERENCIA, PERCENTUAL_RENDIMENTO_PADRAO, obterQuantidade());
+        freteViewModel.calcularIncidencia(obterValorFrete(), obterQuantidade() * obterPesoUnitario().intValue());
     }
 
     private void aoFreteSelecionado(BigDecimal valorFrete) {
         if (isEmpty(valorFrete)) return;
-        binding.entradaTextoValorFrete.removeTextChangedListener(camposEntradaWatcher);
-        setText(binding.entradaTextoValorFrete, formatCurrency(valorFrete));
-        binding.entradaTextoValorFrete.addTextChangedListener(camposEntradaWatcher);
+        atualizarCampoFreteSeAlterado(formatCurrency(valorFrete));
         if (!formularioIncompleto()) {
-            calcularNegociacaoBezerro();
-            calcularIncidenciaFrete();
+            bezerroViewModel.calcularNegociacao(obterPesoUnitario(), VALOR_ARROBA_REFERENCIA, PERCENTUAL_RENDIMENTO_PADRAO, obterQuantidade());
+            freteViewModel.calcularIncidencia(obterValorFrete(), obterQuantidade() * obterPesoUnitario().intValue());
         }
     }
 
-    private void aoStateBezerroAtualizado(PrecificacaoBezerroUiState state) {
-        publicarResumoBezerro(isEmpty(state) ? null : bezerroResumoMapper.mapper(state));
+    private void atualizarCampoFreteSeAlterado(String novoValor) {
+        if (novoValor.equals(binding.entradaTextoValorFrete.getText().toString())) return;
+        binding.entradaTextoValorFrete.removeTextChangedListener(camposEntradaWatcher);
+        setText(binding.entradaTextoValorFrete, novoValor);
+        binding.entradaTextoValorFrete.addTextChangedListener(camposEntradaWatcher);
     }
 
-    private void aoStateBezerroComFreteAtualizado(PrecificacaoBezerroUiState state) {
-        publicarResumoComFrete(isEmpty(state) ? null : bezerroResumoMapper.mapper(state));
-    }
-
-    private void aoStateFreteAtualizado(PrecificacaoFreteUiState state) {
-        publicarResumoFrete(isEmpty(state) ? null : freteResumoMapper.mapper(state));
-    }
-
-    private void aoIncidenciaAtualizada(BigDecimal incidenciaFretePorAnimal) {
-        calcularBezerroComDescontoFrete(incidenciaFretePorAnimal);
-    }
-
-    private void aoResumoFreteAtualizado(ResumoValoresUiState state) {
-        setVisible(isNotEmpty(state), binding.layoutContainerValorFrete);
-    }
-
-    private void aoResumoComFreteAtualizado(ResumoValoresUiState state) {
-        setVisible(isNotEmpty(state), binding.layoutContainerValorComFrete);
-        setVisible(isNotEmpty(state), binding.layoutContainerValorTotalFinal);
-    }
-
-    private void calcularNegociacaoBezerro() {
-        bezerroViewModel.calcularNegociacao(
-                obterPesoUnitarioPorAnimal(),
-                VALOR_ARROBA_REFERENCIA,
-                PERCENTUAL_RENDIMENTO_PADRAO,
-                obterQuantidadeAnimais());
-    }
-
-    private void calcularIncidenciaFrete() {
-        freteViewModel.calcularIncidencia(obterValorFrete(), obterPesoTotalDoLote());
-    }
-
-    private void calcularBezerroComDescontoFrete(BigDecimal incidenciaFretePorAnimal) {
-        if (formularioIncompleto() || isEmpty(incidenciaFretePorAnimal)) {
-            publicarResumoComFrete(null);
+    private void aoIncidenciaAtualizada(BigDecimal incidenciaFrete) {
+        if (formularioIncompleto() || isEmpty(incidenciaFrete) || incidenciaFrete.compareTo(BigDecimal.ZERO) == 0) {
+            obterResumoViewModel(CHAVE_RESUMO_COM_FRETE).setState(null);
             return;
         }
-        bezerroViewModel.calcularNegociacaoComDescontoDoFrete(
-                obterPesoUnitarioPorAnimal(),
-                VALOR_ARROBA_REFERENCIA,
-                PERCENTUAL_RENDIMENTO_PADRAO,
-                obterQuantidadeAnimais(),
-                incidenciaFretePorAnimal);
+        bezerroViewModel.calcularNegociacaoComDescontoDoFrete(obterPesoUnitario(), VALOR_ARROBA_REFERENCIA, PERCENTUAL_RENDIMENTO_PADRAO, obterQuantidade(), incidenciaFrete);
+    }
+
+    private void aoResumoBezerroAtualizado(ResumoValoresUiState estadoResumo) {
+        if (obterValorFrete().compareTo(BigDecimal.ZERO) == 0) {
+            substituirFragmentoNoContainer(R.id.layout_container_valor_com_frete, criarResumoBezerro());
+            setVisible(isNotEmpty(estadoResumo), binding.layoutContainerValorComFrete);
+        }
+        setVisible(isNotEmpty(estadoResumo), binding.layoutContainerValorTotalFinal);
+    }
+
+    private void aoResumoComFreteAtualizado(ResumoValoresUiState estadoResumo) {
+        if (obterValorFrete().compareTo(BigDecimal.ZERO) > 0) {
+            substituirFragmentoNoContainer(R.id.layout_container_valor_com_frete, criarResumoComFrete());
+            setVisible(isNotEmpty(estadoResumo), binding.layoutContainerValorComFrete);
+        }
     }
 
     private void recomendarTransportesParaCategoria(CategoriaUiState categoria) {
-        if (isEmpty(categoria) || isEmpty(obterQuantidadeAnimais())) return;
-        transporteViewModel.recomendar(categoria.getId(), obterQuantidadeAnimais());
-    }
-
-    private void limparResultados() {
-        bezerroViewModel.limpar();
-        freteViewModel.limpar();
-        publicarResumoComFrete(null);
+        if (isEmpty(categoria) || isEmpty(obterQuantidade())) return;
+        transporteViewModel.recomendar(categoria.getId(), obterQuantidade());
     }
 
     private void navegarParaSelecaoFrete() {
-        CategoriaUiState categoria = categoriaViewModel.getCategoriaSelecionada().getValue();
-        if (isEmpty(categoria)) {
+        if (isEmpty(categoriaViewModel.getCategoriaSelecionada().getValue())) {
             AlertHelper.showSnackBar(requireView(), getString(R.string.error_field_category));
             return;
         }
-        if (isEmpty(obterPesoUnitarioPorAnimal()) || isEmpty(obterQuantidadeAnimais())) {
+        if (formularioIncompleto()) {
             AlertHelper.showSnackBar(requireView(), getString(R.string.error_invalid_input));
             return;
         }
-        var direcao = PrecificacaoFragmentDirections
-                .actionPrecificacaoFragmentToPrecificacaoFreteFragment(obterPesoTotalDoLote());
-        NavHostFragment.findNavController(this).navigate(direcao);
+
+        int pesoTotal = obterQuantidade() * obterPesoUnitario().intValue();
+        NavHostFragment.findNavController(this).navigate(PrecificacaoFragmentDirections.actionPrecificacaoFragmentToPrecificacaoFreteFragment(pesoTotal));
     }
 
-    private void publicarResumoBezerro(ResumoValoresUiState resumo) {
-        obterResumoViewModel(CHAVE_RESUMO_BEZERRO).setState(resumo);
+    private void substituirFragmentoNoContainer(int containerId, Fragment fragment) {
+        getChildFragmentManager().beginTransaction()
+                .replace(containerId, fragment)
+                .commit();
     }
 
-    private void publicarResumoFrete(ResumoValoresUiState resumo) {
-        obterResumoViewModel(CHAVE_RESUMO_FRETE).setState(resumo);
+    private ResumoValoresFragment criarResumoFrete() {
+        return ResumoValoresFragment.newInstance(CHAVE_RESUMO_FRETE, getString(R.string.titulo_resumo_frete), getString(R.string.card_label_total_value), getString(R.string.card_label_unit_value_frete));
     }
 
-    private void publicarResumoComFrete(ResumoValoresUiState resumo) {
-        obterResumoViewModel(CHAVE_RESUMO_COM_FRETE).setState(resumo);
+    private ResumoValoresFragment criarResumoComFrete() {
+        return ResumoValoresFragment.newInstance(CHAVE_RESUMO_COM_FRETE, getString(R.string.titulo_resumo_com_frete), getString(R.string.rotulo_valor_final_por_cabeca), getString(R.string.rotulo_valor_final_por_kg));
     }
 
-    private BigDecimal obterPesoUnitarioPorAnimal() {
+    private ResumoValoresFragment criarResumoBezerro() {
+        return ResumoValoresFragment.newInstance(CHAVE_RESUMO_BEZERRO, getString(R.string.titulo_resumo_bezerro), getString(R.string.card_label_total_value), getString(R.string.card_label_unit_value_frete));
+    }
+
+    private BigDecimal obterPesoUnitario() {
         return getBigDecimal(binding.entradaTextoPesoAnimal);
     }
 
     private BigDecimal obterValorFrete() {
-        return getBigDecimal(binding.entradaTextoValorFrete);
+        BigDecimal valor = getBigDecimal(binding.entradaTextoValorFrete);
+        return isEmpty(valor) ? BigDecimal.ZERO : valor;
     }
 
-    private int obterQuantidadeAnimais() {
+    private int obterQuantidade() {
         return getInt(binding.entradaTextoQuantidadeAnimais);
     }
 
-    private int obterPesoTotalDoLote() {
-        return obterQuantidadeAnimais() * obterPesoUnitarioPorAnimal().intValue();
-    }
-
     private boolean formularioIncompleto() {
-        return isEmpty(obterPesoUnitarioPorAnimal()) || isEmpty(obterQuantidadeAnimais()) || isEmpty(obterValorFrete());
+        return isEmpty(obterPesoUnitario()) || isEmpty(obterQuantidade());
     }
 
     private ResumoValoresViewModel obterResumoViewModel(String chave) {

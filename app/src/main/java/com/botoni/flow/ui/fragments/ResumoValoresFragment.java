@@ -29,14 +29,43 @@ public class ResumoValoresFragment extends Fragment {
 
     public static ResumoValoresFragment newInstance(String chave, String titulo,
                                                     String rotuloPrincipal, String rotuloSecundario) {
-        ResumoValoresFragment fragment = new ResumoValoresFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_CHAVE, chave);
-        args.putString(ARG_TITULO, titulo);
-        args.putString(ARG_ROTULO_PRINCIPAL, rotuloPrincipal);
-        args.putString(ARG_ROTULO_SECUNDARIO, rotuloSecundario);
-        fragment.setArguments(args);
-        return fragment;
+        ResumoValoresFragment novoFragment = criarNovoFragment();
+        Bundle argumentos = construirArgumentos(chave, titulo, rotuloPrincipal, rotuloSecundario);
+        novoFragment.setArguments(argumentos);
+        return novoFragment;
+    }
+
+    private static ResumoValoresFragment criarNovoFragment() {
+        return new ResumoValoresFragment();
+    }
+
+    private static Bundle construirArgumentos(String chave, String titulo, String rotuloPrincipal, String rotuloSecundario) {
+        Bundle argumentos = novoBundle();
+        adicionarChaveAoBundle(argumentos, chave);
+        adicionarTituloAoBundle(argumentos, titulo);
+        adicionarRotuloPrincipalAoBundle(argumentos, rotuloPrincipal);
+        adicionarRotuloSecundarioAoBundle(argumentos, rotuloSecundario);
+        return argumentos;
+    }
+
+    private static Bundle novoBundle() {
+        return new Bundle();
+    }
+
+    private static void adicionarChaveAoBundle(Bundle bundle, String chave) {
+        bundle.putString(ARG_CHAVE, chave);
+    }
+
+    private static void adicionarTituloAoBundle(Bundle bundle, String titulo) {
+        bundle.putString(ARG_TITULO, titulo);
+    }
+
+    private static void adicionarRotuloPrincipalAoBundle(Bundle bundle, String rotuloPrincipal) {
+        bundle.putString(ARG_ROTULO_PRINCIPAL, rotuloPrincipal);
+    }
+
+    private static void adicionarRotuloSecundarioAoBundle(Bundle bundle, String rotuloSecundario) {
+        bundle.putString(ARG_ROTULO_SECUNDARIO, rotuloSecundario);
     }
 
     @Nullable
@@ -62,26 +91,87 @@ public class ResumoValoresFragment extends Fragment {
     }
 
     private void inicializarViewModel() {
-        String chave = requireArguments().getString(ARG_CHAVE);
-        if (chave != null) {
-            viewModel = new ViewModelProvider(requireActivity()).get(chave, ResumoValoresViewModel.class);
+        String chaveViewModel = extrairChaveDoArgumento();
+        if (temChaveValida(chaveViewModel)) {
+            criarViewModelComChave(chaveViewModel);
         }
     }
 
+    private String extrairChaveDoArgumento() {
+        return requireArguments().getString(ARG_CHAVE);
+    }
+
+    private boolean temChaveValida(String chave) {
+        return chave != null;
+    }
+
+    private void criarViewModelComChave(String chave) {
+        ViewModelProvider providerDeViewModels = new ViewModelProvider(requireActivity());
+        viewModel = providerDeViewModels.get(chave, ResumoValoresViewModel.class);
+    }
+
     private void aplicarRotulos() {
-        Bundle args = requireArguments();
-        binding.textoTituloSecao.setText(args.getString(ARG_TITULO));
-        binding.textoRotuloPrincipal.setText(args.getString(ARG_ROTULO_PRINCIPAL));
-        binding.textoRotuloSecundario.setText(args.getString(ARG_ROTULO_SECUNDARIO));
+        preencherTituloSecao();
+        preencherRotuloPrincipal();
+        preencherRotuloSecundario();
+    }
+
+    private void preencherTituloSecao() {
+        String titulo = obterTituloDoArgumento();
+        binding.textoTituloSecao.setText(titulo);
+    }
+
+    private String obterTituloDoArgumento() {
+        return requireArguments().getString(ARG_TITULO);
+    }
+
+    private void preencherRotuloPrincipal() {
+        String rotuloPrincipal = obterRotuloPrincipalDoArgumento();
+        binding.textoRotuloPrincipal.setText(rotuloPrincipal);
+    }
+
+    private String obterRotuloPrincipalDoArgumento() {
+        return requireArguments().getString(ARG_ROTULO_PRINCIPAL);
+    }
+
+    private void preencherRotuloSecundario() {
+        String rotuloSecundario = obterRotuloSecundarioDoArgumento();
+        binding.textoRotuloSecundario.setText(rotuloSecundario);
+    }
+
+    private String obterRotuloSecundarioDoArgumento() {
+        return requireArguments().getString(ARG_ROTULO_SECUNDARIO);
     }
 
     private void configurarObservadores() {
-        viewModel.getState().observe(getViewLifecycleOwner(), this::bind);
+        observarMudancasEstado();
     }
 
-    private void bind(ResumoValoresUiState state) {
-        if (state == null) return;
-        binding.textoValorPrincipal.setText(formatCurrency(state.getValorPrincipal()));
-        binding.textoValorSecundario.setText(formatCurrency(state.getValorSecundario()));
+    private void observarMudancasEstado() {
+        viewModel.getState().observe(getViewLifecycleOwner(), this::aoEstadoAtualizado);
+    }
+
+    private void aoEstadoAtualizado(ResumoValoresUiState state) {
+        if (naoTemEstadoValido(state)) return;
+        preencherValoresDaTela(state);
+    }
+
+    private boolean naoTemEstadoValido(ResumoValoresUiState state) {
+        return state == null;
+    }
+
+    private void preencherValoresDaTela(ResumoValoresUiState state) {
+        preencherValorPrincipal(state);
+        preencherValorSecundario(state);
+    }
+
+    private void preencherValorPrincipal(ResumoValoresUiState state) {
+        String valorFormatado = formatCurrency(state.getValorPrincipal());
+        binding.textoValorPrincipal.setText(valorFormatado);
+    }
+
+    private void preencherValorSecundario(ResumoValoresUiState state) {
+        String valorFormatado = formatCurrency(state.getValorSecundario());
+        binding.textoValorSecundario.setText(valorFormatado);
     }
 }
