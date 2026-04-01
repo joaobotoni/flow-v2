@@ -4,7 +4,6 @@ import com.botoni.flow.data.models.PrecificacaoBezerro;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-
 import javax.inject.Inject;
 
 public class PrecificacaoBezerroRepository {

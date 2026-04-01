@@ -12,7 +12,6 @@ public class CategoriaMapper implements BiMapper<CategoriaUiState, CategoriaFret
     public CategoriaMapper() {
     }
 
-
     @Override
     public CategoriaFrete mapTo(CategoriaUiState state) {
         return new CategoriaFrete(state.getId(), state.getDescricao());
