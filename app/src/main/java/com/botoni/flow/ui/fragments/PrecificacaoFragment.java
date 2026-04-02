@@ -130,6 +130,7 @@ public class PrecificacaoFragment extends Fragment {
     private void registrarEventos() {
         configurarTextWatcherInputs();
         configurarClickBotaoFrete();
+        configurarClickBotaoProsseguir();
         configurarListenerResultadoFrete();
     }
 
@@ -142,6 +143,10 @@ public class PrecificacaoFragment extends Fragment {
 
     private void configurarClickBotaoFrete() {
         binding.botaoActionPrecificacaoFrete.setOnClickListener(v -> validarENavegarParaFrete());
+    }
+
+    private void configurarClickBotaoProsseguir() {
+        binding.botaoProsseguir.setOnClickListener(v -> validarENavegarParaDetalhes());
     }
 
     private void configurarListenerResultadoFrete() {
@@ -308,6 +313,17 @@ public class PrecificacaoFragment extends Fragment {
         removerWatcherFrete();
         atribuirTextoFrete(novoValor);
         adicionarWatcherFrete();
+    }
+
+    private void validarENavegarParaDetalhes() {
+        if (falhaValidacaoCategoria()) return;
+        if (falhaValidacaoEntradas()) return;
+        executarNavegacaoDetalhes();
+    }
+
+    private void executarNavegacaoDetalhes() {
+        NavHostFragment.findNavController(this).navigate(
+                PrecificacaoFragmentDirections.actionPrecificacaoFragmentToDetalhePrecificacaoFragment(lerQuantidade()));
     }
 
     private void validarENavegarParaFrete() {
