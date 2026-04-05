@@ -80,16 +80,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/dimen_8"
-                        android:indeterminate="false"
-                        android:max="100"
                         android:progress="0"
-                        app:indicatorColor="?attr/colorPrimary"
+                        app:indicatorColor="?attr/colorOnPrimaryContainer"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/label_progresso"
-                        app:trackColor="?attr/colorOnPrimaryContainer"
-                        app:trackCornerRadius="@dimen/dimen_4" />
-
+                        app:trackColor="#33000000" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 

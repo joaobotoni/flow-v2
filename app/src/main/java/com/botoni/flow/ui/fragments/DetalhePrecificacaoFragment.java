@@ -1,8 +1,8 @@
 package com.botoni.flow.ui.fragments;
 
+import static com.botoni.flow.ui.helpers.AlertHelper.showSnackBar;
 import static com.botoni.flow.ui.helpers.ViewHelper.anyEmpty;
 import static com.botoni.flow.ui.helpers.ViewHelper.getBigDecimal;
-import static com.botoni.flow.ui.helpers.ViewHelper.setText;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,6 +19,10 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.botoni.flow.R;
 import com.botoni.flow.databinding.FragmentDetalhePrecificacaoBinding;
 import com.botoni.flow.ui.adapters.DetalhePrecificacaoAdapter;
+import com.botoni.flow.ui.helpers.FileHelper;
+import com.botoni.flow.ui.helpers.TaskHelper;
+import com.botoni.flow.ui.helpers.ViewHelper;
+import com.botoni.flow.ui.reports.PdfDetalhePrecificacaoBuilder;
 import com.botoni.flow.ui.state.DetalhePrecoBezerroUiState;
 import com.botoni.flow.ui.viewmodel.DetalhePrecificacaoViewModel;
 import com.botoni.flow.ui.viewmodel.ResultadoViewModel;
@@ -27,6 +31,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
@@ -34,6 +40,8 @@ public class DetalhePrecificacaoFragment extends Fragment {
     private static final BigDecimal ARROBA = new BigDecimal("310");
     private static final BigDecimal AGIO = new BigDecimal("30");
     private static final String CHAVE_RESULTADO_DETALHE = "resultado_detalhe";
+    @Inject
+    TaskHelper taskHelper;
     private FragmentDetalhePrecificacaoBinding binding;
     private DetalhePrecificacaoAdapter adapter;
     private DetalhePrecificacaoViewModel viewModel;
@@ -56,7 +64,11 @@ public class DetalhePrecificacaoFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        iniciarSetup();
+        inicializarViewModels();
+        inicializarAdapter();
+        inicializarFragmentosEstaticos();
+        configurarEventos();
+        configurarObservadores();
     }
 
     @Override
@@ -65,132 +77,122 @@ public class DetalhePrecificacaoFragment extends Fragment {
         binding = null;
     }
 
-    private void iniciarSetup() {
-        instanciarViewModels();
-        iniciarAdapterDetalhes();
-        iniciarFragmentosEstaticos();
-        registrarEventos();
-        configurarObservadores();
-    }
-
-    private void instanciarViewModels() {
-        quantidadeTotal = obterQuantidadeTotal();
+    private void inicializarViewModels() {
+        quantidadeTotal = DetalhePrecificacaoFragmentArgs.fromBundle(requireArguments()).getQuantidadeBezerros();
         viewModel = new ViewModelProvider(this).get(DetalhePrecificacaoViewModel.class);
-        resultadoViewModel = new ViewModelProvider(requireActivity())
-                .get(CHAVE_RESULTADO_DETALHE, ResultadoViewModel.class);
+        resultadoViewModel = new ViewModelProvider(requireActivity()).get(CHAVE_RESULTADO_DETALHE, ResultadoViewModel.class);
     }
 
-    private void iniciarAdapterDetalhes() {
-        adapter = new DetalhePrecificacaoAdapter(getOnDetalheActionListener());
+    private void inicializarAdapter() {
+        adapter = new DetalhePrecificacaoAdapter(criarListenerDeAcoes());
         binding.listaPrecoBezerros.setAdapter(adapter);
     }
 
-    private void iniciarFragmentosEstaticos() {
-        substituirFragmento(R.id.container_valor_final, criarFragmentoResultado());
+    private void inicializarFragmentosEstaticos() {
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.container_valor_final, ResultadoFragment.newInstance(CHAVE_RESULTADO_DETALHE))
+                .commit();
     }
 
-    private void registrarEventos() {
-        configurarClickBotaoAdicionar();
-    }
-
-    private void configurarClickBotaoAdicionar() {
-        binding.containerEntrada.setEndIconOnClickListener(v -> aoClicarAdicionar());
+    private void configurarEventos() {
+        binding.containerEntrada.setEndIconOnClickListener(v -> onAdicionarClicado());
+        binding.botaoFinalizar.setOnClickListener(v -> onFinalizarClicado());
     }
 
     private void configurarObservadores() {
-        observarListaDetalhes();
-        observarValorTotal();
-        observarItemParaEditar();
-    }
-
-    private void observarListaDetalhes() {
-        viewModel.getLista().observe(getViewLifecycleOwner(), this::atualizarListaEProgresso);
-    }
-
-    private void observarValorTotal() {
+        viewModel.getLista().observe(getViewLifecycleOwner(), this::atualizarLista);
         viewModel.getValorTotal().observe(getViewLifecycleOwner(), resultadoViewModel::setState);
     }
 
-    private void observarItemParaEditar() {
-        viewModel.getItemParaEditar().observe(getViewLifecycleOwner(), this::preencherCampoPeso);
-    }
-
-    private void aoClicarAdicionar() {
-        if (pesoCampoVazio()) return;
+    private void onAdicionarClicado() {
+        if (campoPesoVazio()) return;
         viewModel.adicionarItem(lerPeso(), ARROBA, AGIO);
         limparCampoPeso();
     }
 
-    private void atualizarListaEProgresso(List<DetalhePrecoBezerroUiState> lista) {
+    private void onFinalizarClicado() {
+        if (!listaValida()) return;
+        gerarECompartilharPdf(capturarListaAtual(), capturarTotalAtual());
+    }
+
+    private void atualizarLista(List<DetalhePrecoBezerroUiState> lista) {
         adapter.submitList(new ArrayList<>(lista));
-        atualizarProgresso(lista.size());
+        binding.textoContagemBezerros.setText(getString(R.string.bezerros_contagem, lista.size(), quantidadeTotal));
+        binding.barraProgresso.setProgressCompat(calcularProgresso(lista.size()), true);
     }
 
-    private void atualizarProgresso(int atual) {
-        atualizarTextoContagem(atual, quantidadeTotal);
-        atualizarBarraProgresso(atual, quantidadeTotal);
+    private void gerarECompartilharPdf(List<DetalhePrecoBezerroUiState> lista, BigDecimal total) {
+        taskHelper.execute(
+                () -> PdfDetalhePrecificacaoBuilder.gerarRelatorioPrecificacao(requireContext(), lista, total),
+                pdf -> {
+                    if (isAdded())
+                        FileHelper.compartilhar(requireActivity(), pdf, "application/pdf", getString(R.string.compartilhar_relatorio));
+                },
+                error -> {
+                    if (isAdded())
+                        showSnackBar(binding.getRoot(), getString(R.string.erro_gerar_pdf));
+                }
+        );
     }
 
-    private void atualizarTextoContagem(int atual, int total) {
-        binding.textoContagemBezerros.setText(getString(R.string.bezerros_contagem, atual, total));
-    }
-
-    private void atualizarBarraProgresso(int atual, int total) {
-        binding.barraProgresso.setProgressCompat(calcularPercentualProgresso(atual, total), true);
-    }
-
-    private DetalhePrecificacaoAdapter.OnDetalheActionListener getOnDetalheActionListener() {
+    private DetalhePrecificacaoAdapter.OnDetalheActionListener criarListenerDeAcoes() {
         return new DetalhePrecificacaoAdapter.OnDetalheActionListener() {
-            @Override public void onEdit(DetalhePrecoBezerroUiState detalhe) { viewModel.editarItem(detalhe); }
-            @Override public void onRemove(int id) { viewModel.removerItem(id); }
+            @Override
+            public void onEdit(DetalhePrecoBezerroUiState detalhe) {
+                abrirDialogEdicao(detalhe);
+            }
+
+            @Override
+            public void onRemove(int id) {
+                viewModel.removerItem(id);
+            }
         };
     }
 
-    private void preencherCampoPeso(DetalhePrecoBezerroUiState detalhe) {
-        if (detalhe != null) {
-            setText(binding.entradaPesoBezerro, detalhe.getPeso().toPlainString());
-        }
+    private void abrirDialogEdicao(DetalhePrecoBezerroUiState detalhe) {
+        DialogEdicaoPesoFragment dialog = DialogEdicaoPesoFragment.newInstance(detalhe);
+        dialog.setOnConfirmListener(novoPeso ->
+                viewModel.atualizarItem(detalhe.getId(), novoPeso, ARROBA, AGIO));
+        dialog.show(getChildFragmentManager(), null);
     }
 
-    private void limparCampoPeso() {
-        binding.entradaPesoBezerro.setText("");
+    private void registrarCallbackVoltar() {
+        requireActivity().getOnBackPressedDispatcher()
+                .addCallback(this, new OnBackPressedCallback(true) {
+                    @Override
+                    public void handleOnBackPressed() {
+                        NavHostFragment.findNavController(DetalhePrecificacaoFragment.this).popBackStack();
+                    }
+                });
     }
 
-    private void substituirFragmento(int containerId, Fragment fragment) {
-        getChildFragmentManager().beginTransaction().replace(containerId, fragment).commit();
+    private boolean listaValida() {
+        List<DetalhePrecoBezerroUiState> lista = viewModel.getLista().getValue();
+        return lista != null && !lista.isEmpty();
     }
 
-    private ResultadoFragment criarFragmentoResultado() {
-        return ResultadoFragment.newInstance(CHAVE_RESULTADO_DETALHE);
+    private List<DetalhePrecoBezerroUiState> capturarListaAtual() {
+        return new ArrayList<>(viewModel.getLista().getValue());
+    }
+
+    private BigDecimal capturarTotalAtual() {
+        BigDecimal total = viewModel.getValorTotal().getValue();
+        return total != null ? total : BigDecimal.ZERO;
+    }
+
+    private int calcularProgresso(int atual) {
+        return quantidadeTotal == 0 ? 0 : (atual * 100) / quantidadeTotal;
     }
 
     private BigDecimal lerPeso() {
         return getBigDecimal(binding.entradaPesoBezerro);
     }
 
-    private boolean pesoCampoVazio() {
+    private boolean campoPesoVazio() {
         return anyEmpty(lerPeso());
     }
 
-    private int obterQuantidadeTotal() {
-        return DetalhePrecificacaoFragmentArgs.fromBundle(requireArguments()).getQuantidadeBezerros();
-    }
-
-    private int calcularPercentualProgresso(int atual, int total) {
-        if (total == 0) return 0;
-        return (atual * 100) / total;
-    }
-
-    private void voltar() {
-        NavHostFragment.findNavController(this).popBackStack();
-    }
-
-    private void registrarCallbackVoltar() {
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                voltar();
-            }
-        });
+    private void limparCampoPeso() {
+        ViewHelper.clearText(binding.entradaPesoBezerro);
     }
 }

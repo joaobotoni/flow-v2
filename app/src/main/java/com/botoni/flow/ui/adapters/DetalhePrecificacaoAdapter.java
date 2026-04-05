@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.botoni.flow.databinding.ItemPrecificacaoBezerroBinding;
 import com.botoni.flow.ui.state.DetalhePrecoBezerroUiState;
 
+import java.util.Locale;
 import java.util.Objects;
 
 public class DetalhePrecificacaoAdapter extends ListAdapter<DetalhePrecoBezerroUiState, DetalhePrecificacaoAdapter.ViewHolder> {
@@ -48,9 +49,10 @@ public class DetalhePrecificacaoAdapter extends ListAdapter<DetalhePrecoBezerroU
         }
 
         void bind(DetalhePrecoBezerroUiState detalhe, OnDetalheActionListener actionListener) {
+            binding.textoIdentificador.setText(String.format(Locale.getDefault(), "%04d", detalhe.getId()));
             setText(binding.textoValorPeso, formatCurrency(detalhe.getPeso()));
-            setText(binding.textoMoedaValorPorKg, formatCurrency(detalhe.getValorPorKg()));
-            setText(binding.textoMoedaValorUnitario, formatCurrency(detalhe.getValorTotal()));
+            setText(binding.textoValorPorKg, formatCurrency(detalhe.getValorPorKg()));
+            setText(binding.textoValorUnitario, formatCurrency(detalhe.getValorTotal()));
             binding.btnEditar.setOnClickListener(v -> actionListener.onEdit(detalhe));
             binding.btnExcluir.setOnClickListener(v -> actionListener.onRemove(detalhe.getId()));
         }

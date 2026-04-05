@@ -52,6 +52,14 @@ public class DetalhePrecificacaoViewModel extends ViewModel {
         );
     }
 
+    public void atualizarItem(int id, BigDecimal novoPeso, BigDecimal arroba, BigDecimal percent) {
+        taskHelper.execute(
+                () -> calcularItemAtualizado(id, novoPeso, arroba, percent),
+                this::substituirItemNaLista,
+                error::postValue
+        );
+    }
+
     public void removerItem(int id) {
         List<DetalhePrecoBezerroUiState> listaAtual = obterListaAtual();
         List<DetalhePrecoBezerroUiState> listaFiltrada = filtrarItemPorId(listaAtual, id);
@@ -62,6 +70,20 @@ public class DetalhePrecificacaoViewModel extends ViewModel {
     public void editarItem(DetalhePrecoBezerroUiState detalhe) {
         itemParaEditar.postValue(detalhe);
         removerItem(detalhe.getId());
+    }
+
+    private DetalhePrecoBezerroUiState calcularItemAtualizado(int id, BigDecimal peso, BigDecimal arroba, BigDecimal percent) {
+        BigDecimal total = repository.calcularValorTotalBezerro(peso, arroba, percent);
+        BigDecimal porKg = repository.calcularValorPorKg(peso, arroba, percent);
+        return new DetalhePrecoBezerroUiState(id, peso, total, porKg);
+    }
+
+    private void substituirItemNaLista(DetalhePrecoBezerroUiState itemAtualizado) {
+        List<DetalhePrecoBezerroUiState> listaAtualizada = obterListaAtual().stream()
+                .map(item -> item.getId() == itemAtualizado.getId() ? itemAtualizado : item)
+                .collect(Collectors.toList());
+        lista.postValue(listaAtualizada);
+        valorTotal.postValue(calcularSomaTotal(listaAtualizada));
     }
 
     private DetalhePrecoBezerroUiState calcularNovoItem(BigDecimal peso, BigDecimal arroba, BigDecimal percent) {

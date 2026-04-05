@@ -17,6 +17,13 @@ public class DetalhePrecoBezerroUiState {
         this.valorPorKg = valorPorKg;
     }
 
+    public DetalhePrecoBezerroUiState(int id, BigDecimal peso, BigDecimal valorTotal, BigDecimal valorPorKg) {
+        this.id = id;
+        this.peso = peso;
+        this.valorTotal = valorTotal;
+        this.valorPorKg = valorPorKg;
+    }
+
     public int getId() { return id; }
     public BigDecimal getPeso() { return peso; }
     public BigDecimal getValorTotal() { return valorTotal; }

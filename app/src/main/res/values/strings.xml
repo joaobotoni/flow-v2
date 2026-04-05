@@ -221,5 +221,10 @@
     <string name="peso_bezerro">Peso do bezerro</string>
     <string name="adicionar">Adicionar</string>
     <string name="finalizar">Finalizar</string>
-
+    <string name="editar_peso">Editar Peso</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="confirmar">Confirmar</string>
+    <string name="compartilhar_relatorio">Compartilhar relatório</string>
+    <string name="erro_gerar_pdf">Erro ao gerar o PDF</string>
+    <string name="editar_peso_animal">Editar peso do animal</string>
 </resources>
