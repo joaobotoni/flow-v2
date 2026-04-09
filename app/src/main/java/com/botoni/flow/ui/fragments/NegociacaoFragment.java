@@ -44,7 +44,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class NegociacaoFragment extends Fragment {
-
     private static final BigDecimal ARROBA = new BigDecimal("310");
     private static final BigDecimal AGIO = new BigDecimal("30");
     private static final String CHAVE_RESUMO_BEZERRO = "resumo_bezerro";
@@ -63,6 +62,7 @@ public class NegociacaoFragment extends Fragment {
     private BigDecimal pesoUnitario;
     private int quantidade;
     private BigDecimal totalOriginal;
+    private BigDecimal incidenciaFrete = BigDecimal.ZERO;
 
     private PrecificacaoBezerroViewModel bezerroViewModel;
     private PrecificacaoFreteViewModel freteViewModel;
@@ -118,7 +118,6 @@ public class NegociacaoFragment extends Fragment {
     }
 
     private void capturarTotalOriginal() {
-        totalOriginal = resultadoFinalViewModel.getState().getValue();
     }
 
     private void configurarComponentesIniciais() {
@@ -165,11 +164,11 @@ public class NegociacaoFragment extends Fragment {
 
     private void observarCalculosBezerro() {
         bezerroViewModel.getState().observe(getViewLifecycleOwner(), estado -> {
-            atualizarEstadoResumoBezerro(estado);
+            atualizarEstadoResumoComFrete(estado);
             atualizarEstadoResultadoFinal(estado);
         });
 
-        bezerroViewModel.getStateComFrete().observe(getViewLifecycleOwner(), this::atualizarEstadoResumoComFrete);
+        bezerroViewModel.getStateComFrete().observe(getViewLifecycleOwner(), this::atualizarEstadoResumoBezerro);
     }
 
     private void preencherInputsComValoresDaPrecificacao() {
@@ -249,7 +248,7 @@ public class NegociacaoFragment extends Fragment {
         BigDecimal valorPorKg = calcularKgPorCabeca(valorPorCab);
         BigDecimal valorTotal = calcularTotalPorCab(valorPorCab);
 
-        aplicarOverrideResumoBezerro(valorPorCab, valorPorKg, valorTotal);
+        aplicarOverrideResumos(valorPorCab, valorPorKg, valorTotal);
         atualizarCampoValorPorKgSilenciosamente(valorPorKg);
     }
 
@@ -258,12 +257,18 @@ public class NegociacaoFragment extends Fragment {
         BigDecimal valorPorCab = calcularCabecaPorKg(valorPorKg);
         BigDecimal valorTotal = calcularTotalPorCab(valorPorCab);
 
-        aplicarOverrideResumoBezerro(valorPorCab, valorPorKg, valorTotal);
+        aplicarOverrideResumos(valorPorCab, valorPorKg, valorTotal);
         atualizarCampoValorPorCabSilenciosamente(valorPorCab);
     }
-    private void aplicarOverrideResumoBezerro(BigDecimal valorPorCab, BigDecimal valorPorKg, BigDecimal valorTotal) {
+    private void aplicarOverrideResumos(BigDecimal valorPorCab, BigDecimal valorPorKg, BigDecimal valorTotal) {
         resumoBezerroViewModel.setState(new ResumoValoresUiState(valorPorCab, valorPorKg));
-        resultadoFinalViewModel.setState(valorTotal);
+
+        BigDecimal valorPorKgComFrete = valorPorKg.add(incidenciaFrete);
+        BigDecimal valorPorCabComFrete = calcularCabecaPorKg(valorPorKgComFrete);
+        BigDecimal valorTotalComFrete = calcularTotalPorCab(valorPorCabComFrete);
+
+        resumoComFreteViewModel.setState(new ResumoValoresUiState(valorPorCabComFrete, valorPorKgComFrete));
+        resultadoFinalViewModel.setState(valorTotalComFrete);
     }
 
     private void restaurarCalculosBaseBezerro() {
@@ -277,10 +282,12 @@ public class NegociacaoFragment extends Fragment {
 
     private void processarIncidenciaFrete(BigDecimal incidencia) {
         if (incidenciaDeveSerIgnorada(incidencia)) {
+            incidenciaFrete = BigDecimal.ZERO;
             limparResumoComFreteUiState();
             calcularBezerroComDescontoFrete(BigDecimal.ZERO);
             return;
         }
+        incidenciaFrete = incidencia;
         calcularBezerroComDescontoFrete(incidencia);
     }
 
@@ -338,6 +345,9 @@ public class NegociacaoFragment extends Fragment {
     }
 
     private void atualizarVariacao(BigDecimal totalAtual) {
+        if (isEmpty(totalOriginal) && isNotEmpty(totalAtual)) {
+            totalOriginal = totalAtual;
+        }
         if (isEmpty(totalOriginal) || isEmpty(totalAtual)) return;
         BigDecimal variacao = calcularVariacaoPercentual(totalOriginal, totalAtual);
         setText(binding.textoValorVariacao, formatCurrency(variacao));
