@@ -73,12 +73,13 @@ public class PrecificacaoFreteTest {
         BigDecimal peso = new BigDecimal("300");
         BigDecimal arroba = new BigDecimal("310");
         BigDecimal percentual = new BigDecimal("30");
+        BigDecimal pesoBase = new BigDecimal("180");
         int quantidadeCabecas = 100;
         double distanciaKm = 481.09;
         int pesoTotal = quantidadeCabecas * peso.intValue();
 
         List<Transporte> transportes = transporteRepository.recomendarTransportes(1L, quantidadeCabecas);
-        PrecificacaoBezerro bezerro = precificacaoBezerroRepository.calcularNegociacaoBezerroComFrete(peso, arroba, percentual, quantidadeCabecas);
+        PrecificacaoBezerro bezerro = precificacaoBezerroRepository.calcularNegociacaoBezerroComFrete(peso, arroba, percentual, quantidadeCabecas, pesoBase);
         BigDecimal valorTotalFrete = freteRepository.calcularFreteTotal(transportes, distanciaKm);
         BigDecimal incidenciaFrete = freteRepository.calcularIncidenciaFretePorAnimal(valorTotalFrete, pesoTotal);
 

@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -47,6 +48,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class NegociacaoFragment extends Fragment {
     private static final BigDecimal ARROBA = new BigDecimal("310");
     private static final BigDecimal AGIO = new BigDecimal("30");
+    private static final BigDecimal PESO_BASE = new BigDecimal("180");
     private static final String CHAVE_RESUMO_BEZERRO = "resumo_bezerro";
     private static final String CHAVE_RESUMO_FRETE = "resumo_frete";
     private static final String CHAVE_RESUMO_COM_FRETE = "resumo_com_frete";
@@ -70,6 +72,12 @@ public class NegociacaoFragment extends Fragment {
     private ResumoValoresViewModel resumoFreteViewModel;
     private ResumoValoresViewModel resumoComFreteViewModel;
     private ResultadoViewModel resultadoFinalViewModel;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        configurarComportamentoBotaoVoltar();
+    }
 
     @Nullable
     @Override
@@ -142,7 +150,7 @@ public class NegociacaoFragment extends Fragment {
 
     private void registrarEventos() {
         configurarTextWatcherInputs();
-        configurarClickBotaoFinalizar();
+        configurarEventosDeClique();
     }
 
     private void configurarTextWatcherInputs() {
@@ -154,8 +162,9 @@ public class NegociacaoFragment extends Fragment {
         binding.entradaTextoValorPorKg.addTextChangedListener(valorPorKgWatcher);
     }
 
-    private void configurarClickBotaoFinalizar() {
-        binding.botaoFinalizar.setOnClickListener(v -> executarNavegacaoDetalhes());
+    private void configurarEventosDeClique() {
+        binding.botaoVoltar.setOnClickListener(v -> executarNavegacaoVoltar());
+        binding.botaoContinuar.setOnClickListener(v -> executarNavegacaoDetalhes());
     }
 
     private void configurarObservadores() {
@@ -224,7 +233,7 @@ public class NegociacaoFragment extends Fragment {
     }
 
     private void calcularValorBaseBezerro() {
-        bezerroViewModel.calcularNegociacaoComFrete(pesoUnitario, ARROBA, AGIO, quantidade);
+        bezerroViewModel.calcularNegociacaoComFrete(pesoUnitario, ARROBA, AGIO, quantidade, PESO_BASE);
     }
 
     private void calcularValorBaseFrete() {
@@ -325,7 +334,7 @@ public class NegociacaoFragment extends Fragment {
     }
 
     private void calcularBezerroComDescontoFrete(BigDecimal incidencia) {
-        bezerroViewModel.calcularNegociacao(pesoUnitario, ARROBA, AGIO, quantidade, incidencia);
+        bezerroViewModel.calcularNegociacao(pesoUnitario, ARROBA, AGIO, quantidade, incidencia, PESO_BASE);
     }
 
     private void processarAtualizacaoResumoBezerroSemFrete(ResumoValoresUiState resumo) {
@@ -387,6 +396,19 @@ public class NegociacaoFragment extends Fragment {
                 .divide(original, 4, RoundingMode.HALF_UP)
                 .multiply(new BigDecimal("100"))
                 .setScale(2, RoundingMode.HALF_UP);
+    }
+
+    private void configurarComportamentoBotaoVoltar() {
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                executarNavegacaoVoltar();
+            }
+        });
+    }
+
+    private void executarNavegacaoVoltar() {
+        NavHostFragment.findNavController(this).popBackStack();
     }
 
     private void executarNavegacaoDetalhes() {

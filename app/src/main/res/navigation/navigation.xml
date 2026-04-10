@@ -50,11 +50,9 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
-
         <argument android:name="quantidadeBezerros" app:argType="integer" />
         <argument android:name="pesoMedio" app:argType="string" />
     </fragment>
-
 
     <fragment
         android:id="@+id/detalhePrecificacaoFragment"

@@ -41,19 +41,19 @@ public class DetalhePrecificacaoViewModel extends ViewModel {
         return error;
     }
 
-    public void adicionarItem(BigDecimal peso, BigDecimal arroba, BigDecimal percent) {
+    public void adicionarItem(BigDecimal peso, BigDecimal arroba, BigDecimal percent, BigDecimal pesoBase) {
         List<DetalhePrecoBezerroUiState> lista = listaAtual();
         taskHelper.execute(
-                () -> adicionarNaLista(lista, peso, arroba, percent),
+                () -> adicionarNaLista(lista, peso, arroba, percent, pesoBase),
                 this::publicar,
                 error::postValue
         );
     }
 
-    public void atualizarItem(int id, BigDecimal peso, BigDecimal arroba, BigDecimal percent) {
+    public void atualizarItem(int id, BigDecimal peso, BigDecimal arroba, BigDecimal percent, BigDecimal pesoBase) {
         List<DetalhePrecoBezerroUiState> lista = listaAtual();
         taskHelper.execute(
-                () -> update(lista, id, calcularItem(id, peso, arroba, percent)),
+                () -> update(lista, id, calcularItem(id, peso, arroba, percent, pesoBase)),
                 this::publicar,
                 error::postValue
         );
@@ -69,8 +69,8 @@ public class DetalhePrecificacaoViewModel extends ViewModel {
     }
 
     private List<DetalhePrecoBezerroUiState> adicionarNaLista(
-            List<DetalhePrecoBezerroUiState> lista, BigDecimal peso, BigDecimal arroba, BigDecimal percent) {
-        lista.add(calcularItem(lista.size(), peso, arroba, percent));
+            List<DetalhePrecoBezerroUiState> lista, BigDecimal peso, BigDecimal arroba, BigDecimal percent, BigDecimal pesoBase) {
+        lista.add(calcularItem(lista.size(), peso, arroba, percent, pesoBase));
         return lista;
     }
 
@@ -103,11 +103,11 @@ public class DetalhePrecificacaoViewModel extends ViewModel {
         return reindexada;
     }
 
-    private DetalhePrecoBezerroUiState calcularItem(int id, BigDecimal peso, BigDecimal arroba, BigDecimal percent) {
+    private DetalhePrecoBezerroUiState calcularItem(int id, BigDecimal peso, BigDecimal arroba, BigDecimal percent, BigDecimal pesoBase) {
         return new DetalhePrecoBezerroUiState(
                 id, peso,
-                repository.calcularValorTotalBezerroComFrete(peso, arroba, percent),
-                repository.calcularValorPorKgComFrete(peso, arroba, percent)
+                repository.calcularValorTotalBezerroComFrete(peso, arroba, percent, pesoBase),
+                repository.calcularValorPorKgComFrete(peso, arroba, percent, pesoBase)
         );
     }
 

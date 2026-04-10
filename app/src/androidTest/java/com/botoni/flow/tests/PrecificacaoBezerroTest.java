@@ -58,17 +58,18 @@ public class PrecificacaoBezerroTest {
         BigDecimal peso = new BigDecimal("330");
         BigDecimal arroba = new BigDecimal("310");
         BigDecimal percentual = new BigDecimal("30");
+        BigDecimal pesoBase = new BigDecimal("180");
         int quantidadeCabecas = 100;
         double distanciaKm = 300.00;
         int pesoTotal = quantidadeCabecas * peso.intValue();
 
         List<Transporte> transportes = transporteRepository.recomendarTransportes(1L, quantidadeCabecas);
 
-        PrecificacaoBezerro bezerroSemFrete = precificacaoBezerroRepository.calcularNegociacaoBezerroComFrete(peso, arroba, percentual, quantidadeCabecas);
+        PrecificacaoBezerro bezerroSemFrete = precificacaoBezerroRepository.calcularNegociacaoBezerroComFrete(peso, arroba, percentual, quantidadeCabecas, pesoBase);
         BigDecimal valorTotalFrete = freteRepository.calcularFreteTotal(transportes, distanciaKm);
         BigDecimal incidenciaFrete = freteRepository.calcularIncidenciaFretePorAnimal(valorTotalFrete, pesoTotal);
 
-        PrecificacaoBezerro bezerroComFrete = precificacaoBezerroRepository.calcularNegociacaoBezerro(peso, arroba, percentual, quantidadeCabecas, incidenciaFrete);
+        PrecificacaoBezerro bezerroComFrete = precificacaoBezerroRepository.calcularNegociacaoBezerro(peso, arroba, percentual, quantidadeCabecas, incidenciaFrete, pesoBase);
 
         System.out.println("RESUMO DA NEGOCIAÇÃO (ANTES DO FRETE)");
         System.out.println("Veículos Usados: " + transportes.size());
@@ -89,12 +90,13 @@ public class PrecificacaoBezerroTest {
         BigDecimal peso = new BigDecimal("300");
         BigDecimal arroba = new BigDecimal("310");
         BigDecimal percentual = new BigDecimal("30");
+        BigDecimal pesoBase = new BigDecimal("180");
         int quantidadeCabecas = 100;
         double distanciaKm = 300.00;
         int pesoTotal = quantidadeCabecas * peso.intValue();
 
         List<Transporte> transportes = transporteRepository.recomendarTransportes(1L, quantidadeCabecas);
-        PrecificacaoBezerro bezerro = precificacaoBezerroRepository.calcularNegociacaoBezerroComFrete(peso, arroba, percentual, quantidadeCabecas);
+        PrecificacaoBezerro bezerro = precificacaoBezerroRepository.calcularNegociacaoBezerroComFrete(peso, arroba, percentual, quantidadeCabecas, pesoBase);
         BigDecimal valorTotalFrete = freteRepository.calcularFreteTotal(transportes, distanciaKm);
         BigDecimal incidenciaFrete = freteRepository.calcularIncidenciaFretePorAnimal(valorTotalFrete, pesoTotal);
 

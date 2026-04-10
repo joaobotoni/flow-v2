@@ -7,9 +7,10 @@
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
         android:scrollbars="none"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/botao_continuar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -18,7 +19,8 @@
             android:id="@+id/container_principal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp">
+            android:padding="20dp"
+            android:paddingBottom="40dp">
 
             <TextView
                 android:id="@+id/texto_titulo_principal"
@@ -36,6 +38,7 @@
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginTop="30dp"
+                android:contentDescription="@null"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/texto_titulo_principal"
                 app:srcCompat="@drawable/male_24px" />
@@ -69,7 +72,11 @@
                     android:id="@+id/entrada_texto_preco_arroba"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal" />
+                    android:digits="0123456789.,"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal"
+                    android:nextFocusDown="@id/entrada_texto_agio_boi_gordo"
+                    android:nextFocusForward="@id/entrada_texto_agio_boi_gordo" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -88,7 +95,34 @@
                     android:id="@+id/entrada_texto_agio_boi_gordo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal" />
+                    android:digits="0123456789.,"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal"
+                    android:nextFocusDown="@id/entrada_texto_peso_referencia_boi"
+                    android:nextFocusForward="@id/entrada_texto_peso_referencia_boi" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/campo_texto_peso_referencia_boi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/hint_peso_referencia"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/campo_texto_agio_boi_gordo"
+                app:shapeAppearance="?attr/shapeAppearanceCornerMedium"
+                app:startIconDrawable="@drawable/swap_vert_24px">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/entrada_texto_peso_referencia_boi"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits="0123456789.,"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal"
+                    android:nextFocusDown="@id/entrada_texto_preco_arroba_vaca"
+                    android:nextFocusForward="@id/entrada_texto_preco_arroba_vaca" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <ImageView
@@ -96,8 +130,9 @@
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginTop="20dp"
+                android:contentDescription="@null"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/campo_texto_agio_boi_gordo"
+                app:layout_constraintTop_toBottomOf="@id/campo_texto_peso_referencia_boi"
                 app:srcCompat="@drawable/female_24px" />
 
             <TextView
@@ -122,14 +157,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/imagem_icone_vaca_gorda"
                 app:prefixText="R$ "
-                app:shapeAppearance="?attr/shapeAppearanceCornerSmall"
+                app:shapeAppearance="?attr/shapeAppearanceCornerMedium"
                 app:startIconDrawable="@drawable/arroba_24px">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/entrada_texto_preco_arroba_vaca"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal" />
+                    android:digits="0123456789.,"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal"
+                    android:nextFocusDown="@id/entrada_texto_agio_vaca_gorda"
+                    android:nextFocusForward="@id/entrada_texto_agio_vaca_gorda" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -141,67 +180,57 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/campo_texto_preco_arroba_vaca"
-                app:shapeAppearance="?attr/shapeAppearanceCornerSmall"
+                app:shapeAppearance="?attr/shapeAppearanceCornerMedium"
                 app:startIconDrawable="@drawable/trending_up_24px">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/entrada_texto_agio_vaca_gorda"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:digits="0123456789.,"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal"
+                    android:nextFocusDown="@id/entrada_texto_peso_referencia_vaca"
+                    android:nextFocusForward="@id/entrada_texto_peso_referencia_vaca" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/campo_texto_peso_referencia_vaca"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/hint_peso_referencia"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/campo_texto_agio_vaca_gorda"
+                app:shapeAppearance="?attr/shapeAppearanceCornerMedium"
+                app:startIconDrawable="@drawable/swap_vert_24px">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/entrada_texto_peso_referencia_vaca"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits="0123456789.,"
+                    android:imeOptions="actionDone"
                     android:inputType="numberDecimal" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <ImageView
-                android:id="@+id/imagem_icone_estrategias"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginTop="20dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/campo_texto_agio_vaca_gorda"
-                app:srcCompat="@drawable/function_24px" />
-
-            <TextView
-                android:id="@+id/texto_titulo_estrategias"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="@string/title_estrategias_de_calculo"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/imagem_icone_estrategias"
-                app:layout_constraintStart_toEndOf="@id/imagem_icone_estrategias"
-                app:layout_constraintTop_toTopOf="@id/imagem_icone_estrategias" />
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/grupo_chips_estrategias"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/texto_titulo_estrategias"
-                app:singleSelection="true">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_preco_peso"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:text="Preço por peso"
-                    app:checkedIcon="@drawable/check_24px"
-                    app:checkedIconVisible="true"
-                    app:chipCornerRadius="50dp" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_preco_faixa"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:text="Preço por faixa"
-                    app:checkedIcon="@drawable/check_24px"
-                    app:checkedIconVisible="true"
-                    app:chipCornerRadius="50dp" />
-
-            </com.google.android.material.chip.ChipGroup>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <Button
+        android:id="@+id/botao_continuar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/confirmar"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:shapeAppearance="?attr/shapeAppearanceCornerMedium" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

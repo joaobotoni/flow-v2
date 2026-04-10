@@ -3,6 +3,7 @@ package com.botoni.flow.ui.fragments;
 import static com.botoni.flow.ui.helpers.AlertHelper.showSnackBar;
 import static com.botoni.flow.ui.helpers.ViewHelper.anyEmpty;
 import static com.botoni.flow.ui.helpers.ViewHelper.getBigDecimal;
+import static com.botoni.flow.ui.helpers.ViewHelper.orElse;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -29,7 +30,10 @@ import com.botoni.flow.ui.viewmodel.ResultadoViewModel;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -39,6 +43,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class DetalhePrecificacaoFragment extends Fragment {
     private static final BigDecimal ARROBA = new BigDecimal("310");
     private static final BigDecimal AGIO = new BigDecimal("30");
+    private static final BigDecimal PESO_BASE = new BigDecimal("180");
     private static final String CHAVE_RESULTADO_DETALHE = "resultado_detalhe";
     @Inject
     TaskHelper taskHelper;
@@ -79,7 +84,7 @@ public class DetalhePrecificacaoFragment extends Fragment {
 
     private void inicializarViewModels() {
         quantidadeTotal = DetalhePrecificacaoFragmentArgs.fromBundle(requireArguments()).getQuantidadeBezerros();
-        viewModel = new ViewModelProvider(this).get(DetalhePrecificacaoViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(DetalhePrecificacaoViewModel.class);
         resultadoViewModel = new ViewModelProvider(requireActivity()).get(CHAVE_RESULTADO_DETALHE, ResultadoViewModel.class);
     }
 
@@ -96,7 +101,8 @@ public class DetalhePrecificacaoFragment extends Fragment {
 
     private void configurarEventos() {
         binding.containerEntrada.setEndIconOnClickListener(v -> onAdicionarClicado());
-        binding.botaoFinalizar.setOnClickListener(v -> onFinalizarClicado());
+        binding.botaoVoltar.setOnClickListener(v -> executarNavegacaoVoltar());
+        binding.botaoContinuar.setOnClickListener(v -> onFinalizarClicado());
     }
 
     private void configurarObservadores() {
@@ -110,7 +116,7 @@ public class DetalhePrecificacaoFragment extends Fragment {
             showSnackBar(requireView(), getString(R.string.limite_bezerros_atingido));
             return;
         }
-        viewModel.adicionarItem(lerPeso(), ARROBA, AGIO);
+        viewModel.adicionarItem(lerPeso(), ARROBA, AGIO, PESO_BASE);
         limparCampoPeso();
     }
 
@@ -159,7 +165,7 @@ public class DetalhePrecificacaoFragment extends Fragment {
 
     private void abrirDialogEdicao(DetalhePrecoBezerroUiState detalhe) {
         DialogEdicaoPesoFragment dialog = DialogEdicaoPesoFragment.newInstance(detalhe);
-        dialog.setOnConfirmListener(novoPeso -> viewModel.atualizarItem(detalhe.getId(), novoPeso, ARROBA, AGIO));
+        dialog.setOnConfirmListener(novoPeso -> viewModel.atualizarItem(detalhe.getId(), novoPeso, ARROBA, AGIO, PESO_BASE));
         dialog.show(getChildFragmentManager(), null);
     }
 
@@ -168,9 +174,13 @@ public class DetalhePrecificacaoFragment extends Fragment {
                 .addCallback(this, new OnBackPressedCallback(true) {
                     @Override
                     public void handleOnBackPressed() {
-                        NavHostFragment.findNavController(DetalhePrecificacaoFragment.this).popBackStack();
+                        executarNavegacaoVoltar();
                     }
                 });
+    }
+
+    private void executarNavegacaoVoltar() {
+        NavHostFragment.findNavController(this).popBackStack();
     }
 
     private boolean listaValida() {
@@ -179,7 +189,7 @@ public class DetalhePrecificacaoFragment extends Fragment {
     }
 
     private List<DetalhePrecoBezerroUiState> capturarListaAtual() {
-        return new ArrayList<>(viewModel.getState().getValue());
+        return new ArrayList<>(orElse(viewModel.getState().getValue(), Collections.emptyList()));
     }
 
     private BigDecimal capturarTotalAtual() {

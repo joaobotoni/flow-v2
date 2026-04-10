@@ -52,6 +52,8 @@ public class PrecificacaoFragment extends Fragment {
 
     private static final BigDecimal ARROBA = new BigDecimal("310");
     private static final BigDecimal AGIO = new BigDecimal("30");
+
+    private static final BigDecimal PESO_BASE = new BigDecimal("30");
     private static final String CHAVE_RESUMO_BEZERRO = "resumo_bezerro";
     private static final String CHAVE_RESUMO_FRETE = "resumo_frete";
     private static final String CHAVE_RESUMO_COM_FRETE = "resumo_com_frete";
@@ -219,7 +221,7 @@ public class PrecificacaoFragment extends Fragment {
     }
 
     private void calcularValorBaseBezerro() {
-        bezerroViewModel.calcularNegociacaoComFrete(lerPesoUnitario(), ARROBA, AGIO, lerQuantidade());
+        bezerroViewModel.calcularNegociacaoComFrete(lerPesoUnitario(), ARROBA, AGIO, lerQuantidade(), PESO_BASE);
     }
 
     private void calcularValorBaseFrete() {
@@ -261,7 +263,7 @@ public class PrecificacaoFragment extends Fragment {
     }
 
     private void calcularBezerroComDescontoFrete(BigDecimal incidencia) {
-        bezerroViewModel.calcularNegociacao(lerPesoUnitario(), ARROBA, AGIO, lerQuantidade(), incidencia);
+        bezerroViewModel.calcularNegociacao(lerPesoUnitario(), ARROBA, AGIO, lerQuantidade(), incidencia, PESO_BASE);
     }
 
     private void processarNovoValorFrete(String valorFreteStr) {
