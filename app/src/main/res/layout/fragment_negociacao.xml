@@ -1,145 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?attr/colorSurface">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/container_rodape"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorSurface"
-        android:elevation="8dp"
-        android:paddingHorizontal="@dimen/dimen_20"
-        android:paddingTop="@dimen/dimen_12"
-        android:paddingBottom="@dimen/dimen_20"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <ImageView
-            android:id="@+id/icone_variacao"
-            android:layout_width="@dimen/dimen_20"
-            android:layout_height="@dimen/dimen_20"
-            android:alpha="0.6"
-            android:contentDescription="@null"
-            app:layout_constraintBottom_toBottomOf="@id/botao_finalizar"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/botao_finalizar"
-            app:srcCompat="@drawable/percent_discount_24px"
-            app:tint="?attr/colorOnSurfaceVariant" />
-
-        <TextView
-            android:id="@+id/texto_valor_variacao"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dimen_8"
-            android:text="@string/default_decimal_value"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="@dimen/text_22"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/icone_variacao"
-            app:layout_constraintStart_toEndOf="@id/icone_variacao"
-            app:layout_constraintTop_toTopOf="@id/icone_variacao" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/botao_finalizar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dimen_16"
-            android:text="@string/finalizar"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/texto_valor_variacao"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearance="?attr/shapeAppearanceCornerSmall" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    android:layout_height="match_parent">
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:scrollbars="none"
-        android:layout_marginTop="@dimen/dimen_20"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/container_rodape"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_principal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="@dimen/dimen_20"
-            android:paddingTop="@dimen/dimen_20"
-            android:paddingBottom="@dimen/dimen_20">
+            android:padding="@dimen/dimen_20">
 
             <TextView
                 android:id="@+id/texto_titulo_principal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/dimen_20"
                 android:text="@string/title_main"
-                android:textSize="@dimen/text_14" />
+                android:textSize="@dimen/text_14"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <LinearLayout
-                android:id="@+id/container_cabecalho"
+            <ImageView
+                android:id="@+id/imagem_icone_frete"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="@dimen/dimen_28"
+                android:contentDescription="@null"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/texto_titulo_principal"
+                app:srcCompat="@drawable/handshake_24px" />
+
+            <TextView
+                android:id="@+id/texto_titulo_frete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/imagem_icone_frete"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:contentDescription="@null"
-                    app:srcCompat="@drawable/handshake_24px" />
-
-                <TextView
-                    android:id="@+id/texto_titulo_frete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/dimen_8"
-                    android:text="@string/negocia_o"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
+                android:layout_marginStart="@dimen/dimen_8"
+                android:text="@string/negocia_o"
+                android:textSize="@dimen/text_22"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/imagem_icone_frete"
+                app:layout_constraintStart_toEndOf="@id/imagem_icone_frete"
+                app:layout_constraintTop_toTopOf="@id/imagem_icone_frete" />
 
             <LinearLayout
                 android:id="@+id/container_metricas_lote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_16"
-                android:orientation="horizontal">
+                android:layout_marginTop="@dimen/dimen_10"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imagem_icone_frete">
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/card_peso_total"
                     style="?attr/materialCardViewFilledStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginEnd="@dimen/dimen_4"
+                    android:layout_marginEnd="6dp"
                     app:cardBackgroundColor="?attr/colorPrimaryContainer"
-                    app:shapeAppearance="?attr/shapeAppearanceCornerLarge">
+                    app:cardElevation="0dp"
+                    app:shapeAppearance="?attr/shapeAppearanceCornerMedium">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/dimen_16">
+                        android:padding="16dp">
 
                         <ImageView
-                            android:id="@+id/icone_peso_total"
-                            android:layout_width="@dimen/dimen_20"
-                            android:layout_height="@dimen/dimen_20"
-                            android:alpha="0.7"
+                            android:id="@+id/icone_peso_medio"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:alpha="0.8"
                             android:contentDescription="@null"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
@@ -150,36 +95,36 @@
                             android:id="@+id/texto_rotulo_peso_medio"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/dimen_4"
+                            android:layout_marginStart="6dp"
                             android:alpha="0.8"
                             android:text="@string/card_label_peso_medio"
                             android:textAllCaps="true"
                             android:textColor="?attr/colorOnPrimaryContainer"
-                            android:textSize="@dimen/text_10"
-                            app:layout_constraintBottom_toBottomOf="@id/icone_peso_total"
-                            app:layout_constraintStart_toEndOf="@id/icone_peso_total"
-                            app:layout_constraintTop_toTopOf="@id/icone_peso_total" />
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="@id/icone_peso_medio"
+                            app:layout_constraintStart_toEndOf="@id/icone_peso_medio"
+                            app:layout_constraintTop_toTopOf="@id/icone_peso_medio" />
 
                         <TextView
                             android:id="@+id/texto_valor_peso_medio"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/dimen_4"
+                            android:layout_marginTop="8dp"
                             android:text="@string/default_decimal_value"
                             android:textColor="?attr/colorOnPrimaryContainer"
-                            android:textSize="@dimen/text_22"
+                            android:textSize="22sp"
                             android:textStyle="bold"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/icone_peso_total" />
+                            app:layout_constraintTop_toBottomOf="@id/icone_peso_medio" />
 
                         <TextView
-                            android:id="@+id/texto_unidade_peso_total"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/dimen_4"
+                            android:layout_marginStart="4dp"
                             android:text="@string/unit_kg"
                             android:textColor="?attr/colorOnPrimaryContainer"
-                            android:textSize="@dimen/text_14"
+                            android:textSize="14sp"
                             app:layout_constraintBaseline_toBaselineOf="@id/texto_valor_peso_medio"
                             app:layout_constraintStart_toEndOf="@id/texto_valor_peso_medio" />
 
@@ -187,40 +132,42 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/card_quantidade_cabecas"
                     style="?attr/materialCardViewFilledStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="@dimen/dimen_4"
+                    android:layout_marginStart="6dp"
                     app:cardBackgroundColor="?attr/colorSurfaceContainerHigh"
-                    app:shapeAppearance="?attr/shapeAppearanceCornerLarge">
+                    app:cardElevation="0dp"
+                    app:shapeAppearance="?attr/shapeAppearanceCornerMedium">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/dimen_16">
+                        android:padding="16dp">
 
                         <ImageView
                             android:id="@+id/icone_quantidade_cabecas"
-                            android:layout_width="@dimen/dimen_20"
-                            android:layout_height="@dimen/dimen_20"
-                            android:alpha="0.7"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:alpha="0.8"
                             android:contentDescription="@null"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/inventory_24px" />
+                            app:srcCompat="@drawable/inventory_24px"
+                            app:tint="?attr/colorOnSurface" />
 
                         <TextView
                             android:id="@+id/texto_rotulo_quantidade_cabecas"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/dimen_4"
-                            android:alpha="0.7"
+                            android:layout_marginStart="6dp"
+                            android:alpha="0.8"
                             android:text="@string/card_label_cabecas"
                             android:textAllCaps="true"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            android:textSize="@dimen/text_10"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="@id/icone_quantidade_cabecas"
                             app:layout_constraintStart_toEndOf="@id/icone_quantidade_cabecas"
                             app:layout_constraintTop_toTopOf="@id/icone_quantidade_cabecas" />
@@ -229,22 +176,21 @@
                             android:id="@+id/texto_valor_quantidade_cabecas"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/dimen_4"
+                            android:layout_marginTop="8dp"
                             android:text="@string/default_integer_value"
                             android:textColor="?attr/colorOnSurface"
-                            android:textSize="@dimen/text_22"
+                            android:textSize="22sp"
                             android:textStyle="bold"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/icone_quantidade_cabecas" />
 
                         <TextView
-                            android:id="@+id/texto_unidade_quantidade_cabecas"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/dimen_4"
+                            android:layout_marginStart="4dp"
                             android:text="@string/card_suffix_head"
                             android:textColor="?attr/colorOnSurface"
-                            android:textSize="@dimen/text_14"
+                            android:textSize="14sp"
                             app:layout_constraintBaseline_toBaselineOf="@id/texto_valor_quantidade_cabecas"
                             app:layout_constraintStart_toEndOf="@id/texto_valor_quantidade_cabecas" />
 
@@ -257,8 +203,11 @@
                 android:id="@+id/campo_valor_frete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_16"
+                android:layout_marginTop="@dimen/dimen_10"
                 android:hint="@string/hint_valor_frete_ex"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/container_metricas_lote"
                 app:shapeAppearance="?attr/shapeAppearanceCornerSmall"
                 app:startIconDrawable="@drawable/payments_24px">
 
@@ -266,56 +215,56 @@
                     android:id="@+id/entrada_texto_valor_frete"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:digits="0123456789,"
+                    android:digits="0123456789.,"
                     android:inputType="numberDecimal" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/campo_valor_por_cab"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_10"
-                android:orientation="horizontal">
+                android:layout_marginEnd="@dimen/dimen_8"
+                android:hint="@string/hint_valor_por_cab"
+                app:layout_constraintEnd_toStartOf="@id/campo_valor_por_kg"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/campo_valor_frete"
+                app:shapeAppearance="?attr/shapeAppearanceCornerSmall"
+                app:startIconDrawable="@drawable/attach_money_24px">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/campo_valor_por_cab"
-                    android:layout_width="0dp"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/entrada_texto_valor_por_cab"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="@dimen/dimen_4"
-                    android:hint="@string/hint_valor_por_cab"
-                    app:shapeAppearance="?attr/shapeAppearanceCornerSmall"
-                    app:startIconDrawable="@drawable/attach_money_24px">
+                    android:digits="0123456789.,"
+                    android:inputType="numberDecimal" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/entrada_texto_valor_por_cab"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:digits="0123456789,"
-                        android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-                </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/campo_valor_por_kg"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_valor_por_kg"
+                app:layout_constraintBottom_toBottomOf="@id/campo_valor_por_cab"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@id/campo_valor_por_cab"
+                app:layout_constraintTop_toTopOf="@id/campo_valor_por_cab"
+                app:shapeAppearance="?attr/shapeAppearanceCornerSmall"
+                app:startIconDrawable="@drawable/attach_money_24px">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/campo_valor_por_kg"
-                    android:layout_width="0dp"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/entrada_texto_valor_por_kg"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="@dimen/dimen_4"
-                    android:hint="@string/hint_valor_por_kg"
-                    app:shapeAppearance="?attr/shapeAppearanceCornerSmall"
-                    app:startIconDrawable="@drawable/attach_money_24px">
+                    android:digits="0123456789.,"
+                    android:inputType="numberDecimal" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/entrada_texto_valor_por_kg"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:digits="0123456789,"
-                        android:inputType="numberDecimal" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-            </LinearLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/layout_container_valor_bezerro"
@@ -323,6 +272,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_10"
                 android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/campo_valor_por_cab"
                 tools:layout="@layout/fragment_resumo_valores"
                 tools:visibility="visible" />
 
@@ -332,6 +284,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_10"
                 android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_container_valor_bezerro"
                 tools:layout="@layout/fragment_resumo_valores"
                 tools:visibility="visible" />
 
@@ -341,6 +296,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_10"
                 android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_container_valor_frete"
                 tools:layout="@layout/fragment_resumo_valores"
                 tools:visibility="visible" />
 
@@ -350,8 +308,89 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_10"
                 android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_container_valor_bezerro_com_frete"
                 tools:layout="@layout/fragment_resultado"
                 tools:visibility="visible" />
-        </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_rodape"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        android:paddingHorizontal="@dimen/dimen_20"
+        android:paddingTop="@dimen/dimen_12"
+        android:paddingBottom="@dimen/dimen_20"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:id="@+id/layout_info_variacao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/rotulo_variacao_titulo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0.7"
+                android:letterSpacing="0.05"
+                android:text="@string/card_label_variacao"
+                android:textAllCaps="true"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/icone_variacao"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:contentDescription="@null"
+                    app:srcCompat="@drawable/percent_discount_24px"
+                    app:tint="?attr/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/texto_valor_variacao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="@string/default_decimal_value"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/botao_finalizar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dimen_20"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/finalizar"
+            android:textSize="@dimen/text_14"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/layout_info_variacao"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearance="?attr/shapeAppearanceCornerSmall" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

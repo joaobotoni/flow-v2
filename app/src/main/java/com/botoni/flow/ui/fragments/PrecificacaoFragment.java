@@ -49,17 +49,21 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class PrecificacaoFragment extends Fragment {
+
     private static final BigDecimal ARROBA = new BigDecimal("310");
     private static final BigDecimal AGIO = new BigDecimal("30");
     private static final String CHAVE_RESUMO_BEZERRO = "resumo_bezerro";
     private static final String CHAVE_RESUMO_FRETE = "resumo_frete";
     private static final String CHAVE_RESUMO_COM_FRETE = "resumo_com_frete";
     private static final String CHAVE_RESULTADO_FINAL = "resultado_final";
+
     @Inject BezerroResumoMapper bezerroResumoMapper;
     @Inject FreteResumoMapper freteResumoMapper;
+
     private FragmentPrecificacaoBinding binding;
     private TextWatcher entradaWatcher;
     private CategoriaAdapter categoriaAdapter;
+
     private PrecificacaoBezerroViewModel bezerroViewModel;
     private PrecificacaoFreteViewModel freteViewModel;
     private CategoriaViewModel categoriaViewModel;
@@ -68,6 +72,7 @@ public class PrecificacaoFragment extends Fragment {
     private ResumoValoresViewModel resumoFreteViewModel;
     private ResumoValoresViewModel resumoComFreteViewModel;
     private ResultadoViewModel resultadoFinalViewModel;
+
 
     @Nullable
     @Override
@@ -174,11 +179,7 @@ public class PrecificacaoFragment extends Fragment {
     }
 
     private void observarCalculosBezerro() {
-        bezerroViewModel.getState().observe(getViewLifecycleOwner(), estado -> {
-            atualizarEstadoResumoComFrete(estado);
-            atualizarEstadoResultadoFinal(estado);
-        });
-
+        bezerroViewModel.getState().observe(getViewLifecycleOwner(), this::processarEstadoBezerro);
         bezerroViewModel.getStateComFrete().observe(getViewLifecycleOwner(), this::atualizarEstadoResumoBezerro);
     }
 
@@ -194,8 +195,14 @@ public class PrecificacaoFragment extends Fragment {
         processarFluxoCalculos();
     }
 
-    private void notificarMudancaRecomendacaoTransporte() {
-        processarRecomendacaoTransporte(categoriaViewModel.getCategoriaSelecionada().getValue());
+    private void aoSelecionarCategoriaNaLista(CategoriaUiState categoria) {
+        categoriaViewModel.selecionar(categoria);
+    }
+
+    private void aoReceberResultadoFrete(Bundle bundle) {
+        String valorFreteStr = extrairValorFrete(bundle);
+        if (isEmpty(valorFreteStr)) return;
+        processarNovoValorFrete(valorFreteStr);
     }
 
     private void processarFluxoCalculos() {
@@ -211,34 +218,17 @@ public class PrecificacaoFragment extends Fragment {
         calcularValorBaseFrete();
     }
 
-    private void aoSelecionarCategoriaNaLista(CategoriaUiState categoria) {
-        categoriaViewModel.selecionar(categoria);
+    private void calcularValorBaseBezerro() {
+        bezerroViewModel.calcularNegociacaoComFrete(lerPesoUnitario(), ARROBA, AGIO, lerQuantidade());
     }
 
-    private void processarRecomendacaoTransporte(CategoriaUiState categoria) {
-        if (dadosIncompletosParaRecomendacao(categoria)) return;
-        solicitarRecomendacaoTransporte(categoria.getId());
+    private void calcularValorBaseFrete() {
+        freteViewModel.calcularIncidencia(lerValorFrete(), calcularPesoTotalLote());
     }
 
-    private void solicitarRecomendacaoTransporte(long categoriaId) {
-        transporteViewModel.recomendar(categoriaId, lerQuantidade());
-    }
-
-    private void atualizarEstadoResumoFrete(PrecificacaoFreteUiState estado) {
-        resumoFreteViewModel.setState(isEmpty(estado) ? null : freteResumoMapper.mapper(estado));
-    }
-
-    private void processarIncidenciaFrete(BigDecimal incidencia) {
-        if (incidenciaDeveSerIgnorada(incidencia)) {
-            limparResumoComFreteUiState();
-            calcularBezerroComDescontoFrete(BigDecimal.ZERO);
-            return;
-        }
-        calcularBezerroComDescontoFrete(incidencia);
-    }
-
-    private void calcularBezerroComDescontoFrete(BigDecimal incidencia) {
-        bezerroViewModel.calcularNegociacao(lerPesoUnitario(), ARROBA, AGIO, lerQuantidade(), incidencia);
+    private void processarEstadoBezerro(PrecificacaoBezerroUiState estado) {
+        atualizarEstadoResumoComFrete(estado);
+        atualizarEstadoResultadoFinal(estado);
     }
 
     private void atualizarEstadoResumoBezerro(PrecificacaoBezerroUiState estado) {
@@ -253,6 +243,40 @@ public class PrecificacaoFragment extends Fragment {
         resultadoFinalViewModel.setState(isEmpty(estado) ? null : estado.getValorTotal());
     }
 
+    private void atualizarEstadoResumoFrete(PrecificacaoFreteUiState estado) {
+        resumoFreteViewModel.setState(isEmpty(estado) ? null : freteResumoMapper.mapper(estado));
+    }
+
+    private void processarIncidenciaFrete(BigDecimal incidencia) {
+        if (incidenciaDeveSerIgnorada(incidencia)) {
+            redefinirIncidenciaFrete();
+            return;
+        }
+        calcularBezerroComDescontoFrete(incidencia);
+    }
+
+    private void redefinirIncidenciaFrete() {
+        limparResumoComFreteUiState();
+        calcularBezerroComDescontoFrete(BigDecimal.ZERO);
+    }
+
+    private void calcularBezerroComDescontoFrete(BigDecimal incidencia) {
+        bezerroViewModel.calcularNegociacao(lerPesoUnitario(), ARROBA, AGIO, lerQuantidade(), incidencia);
+    }
+
+    private void processarNovoValorFrete(String valorFreteStr) {
+        String valorFormatado = formatCurrency(new BigDecimal(valorFreteStr));
+        if (!isValorFreteDiferente(valorFormatado)) return;
+        aplicarNovoValorFreteNaInterface(valorFormatado);
+        processarFluxoCalculos();
+    }
+
+    private void aplicarNovoValorFreteNaInterface(String novoValor) {
+        removerWatcherFrete();
+        atribuirTextoFrete(novoValor);
+        adicionarWatcherFrete();
+    }
+
     private void processarAtualizacaoResumoBezerroSemFrete(ResumoValoresUiState resumo) {
         substituirFragmento(R.id.layout_container_valor_bezerro, criarFragmentoResumoBezerroSemFrete());
         atualizarVisibilidadeContainerSemFrete(resumo);
@@ -260,20 +284,12 @@ public class PrecificacaoFragment extends Fragment {
     }
 
     private void processarAtualizacaoResumoComFrete(ResumoValoresUiState resumo) {
-        if (isFreteDeclarado()) {
-            aplicarLayoutCenarioComFrete(resumo);
-        } else {
-            aplicarLayoutCenarioSemFrete();
+        if (!isFreteDeclarado()) {
+            ocultarContainerComFrete();
+            return;
         }
-    }
-
-    private void aplicarLayoutCenarioComFrete(ResumoValoresUiState resumo) {
         substituirFragmento(R.id.layout_container_valor_bezerro_com_frete, criarFragmentoResumoBezerroComFrete());
         atualizarVisibilidadeContainerComFrete(resumo);
-    }
-
-    private void aplicarLayoutCenarioSemFrete() {
-        setVisible(false, binding.layoutContainerValorBezerroComFrete);
     }
 
     private void atualizarVisibilidadeContainerFrete(ResumoValoresUiState resumo) {
@@ -292,36 +308,27 @@ public class PrecificacaoFragment extends Fragment {
         setVisible(isNotEmpty(resumo), binding.layoutContainerValorTotalFinal);
     }
 
-    private void aoReceberResultadoFrete(Bundle bundle) {
-        String valorFreteStr = extrairValorFrete(bundle);
-        if (isNotEmpty(valorFreteStr)) {
-            processarNovoValorFrete(valorFreteStr);
-        }
+    private void ocultarContainerComFrete() {
+        setVisible(false, binding.layoutContainerValorBezerroComFrete);
     }
 
-    private void processarNovoValorFrete(String valorFreteStr) {
-        String valorFormatado = formatCurrency(new BigDecimal(valorFreteStr));
-        if (isValorFreteDiferente(valorFormatado)) {
-            aplicarNovoValorFreteNaInterface(valorFormatado);
-            processarFluxoCalculos();
-        }
+    private void notificarMudancaRecomendacaoTransporte() {
+        processarRecomendacaoTransporte(categoriaViewModel.getCategoriaSelecionada().getValue());
     }
 
-    private void aplicarNovoValorFreteNaInterface(String novoValor) {
-        removerWatcherFrete();
-        atribuirTextoFrete(novoValor);
-        adicionarWatcherFrete();
+    private void processarRecomendacaoTransporte(CategoriaUiState categoria) {
+        if (dadosIncompletosParaRecomendacao(categoria)) return;
+        solicitarRecomendacaoTransporte(categoria.getId());
+    }
+
+    private void solicitarRecomendacaoTransporte(long categoriaId) {
+        transporteViewModel.recomendar(categoriaId, lerQuantidade());
     }
 
     private void validarENavegarParaNegociacao() {
         if (falhaValidacaoCategoria()) return;
         if (falhaValidacaoEntradas()) return;
         executarNavegacaoNegociacao();
-    }
-
-    private void executarNavegacaoNegociacao() {
-        NavHostFragment.findNavController(this).navigate(
-                PrecificacaoFragmentDirections.actionPrecificacaoFragmentToNegociacaoFragment(lerQuantidade(), lerPesoUnitario().toPlainString()));
     }
 
     private void validarENavegarParaFrete() {
@@ -331,50 +338,29 @@ public class PrecificacaoFragment extends Fragment {
     }
 
     private boolean falhaValidacaoCategoria() {
-        if (isCategoriaNaoSelecionada()) {
-            exibirAlertaErro(R.string.error_field_category);
-            return true;
-        }
-        return false;
+        if (!isCategoriaNaoSelecionada()) return false;
+        exibirAlertaErro(R.string.error_field_category);
+        return true;
     }
 
     private boolean falhaValidacaoEntradas() {
-        if (dadosIncompletosParaCalculo()) {
-            exibirAlertaErro(R.string.error_invalid_input);
-            return true;
-        }
-        return false;
+        if (!dadosIncompletosParaCalculo()) return false;
+        exibirAlertaErro(R.string.error_invalid_input);
+        return true;
     }
 
     private void exibirAlertaErro(int mensagemId) {
         showSnackBar(requireView(), getString(mensagemId));
     }
 
+    private void executarNavegacaoNegociacao() {
+        NavHostFragment.findNavController(this).navigate(
+                PrecificacaoFragmentDirections.actionPrecificacaoFragmentToNegociacaoFragment(lerQuantidade(), lerPesoUnitario().toPlainString()));
+    }
+
     private void executarNavegacaoFrete() {
         NavHostFragment.findNavController(this).navigate(
                 PrecificacaoFragmentDirections.actionPrecificacaoFragmentToPrecificacaoFreteFragment(calcularPesoTotalLote()));
-    }
-
-    private void calcularValorBaseBezerro() {
-        bezerroViewModel.calcularNegociacaoComFrete(lerPesoUnitario(), ARROBA, AGIO, lerQuantidade());
-    }
-
-    private void calcularValorBaseFrete() {
-        freteViewModel.calcularIncidencia(lerValorFrete(), calcularPesoTotalLote());
-    }
-
-    private void limparTodosResultados() {
-        bezerroViewModel.limpar();
-        freteViewModel.limpar();
-        limparResumoComFreteUiState();
-    }
-
-    private void limparResumoComFreteUiState() {
-        resumoComFreteViewModel.setState(null);
-    }
-
-    private void substituirFragmento(int containerId, Fragment fragment) {
-        getChildFragmentManager().beginTransaction().replace(containerId, fragment).commit();
     }
 
     private ResumoValoresFragment criarFragmentoResumoFrete() {
@@ -405,6 +391,10 @@ public class PrecificacaoFragment extends Fragment {
         return ResultadoFragment.newInstance(CHAVE_RESULTADO_FINAL);
     }
 
+    private void substituirFragmento(int containerId, Fragment fragment) {
+        getChildFragmentManager().beginTransaction().replace(containerId, fragment).commit();
+    }
+
     private void removerWatcherFrete() {
         binding.entradaTextoValorFrete.removeTextChangedListener(entradaWatcher);
     }
@@ -417,10 +407,15 @@ public class PrecificacaoFragment extends Fragment {
         setText(binding.entradaTextoValorFrete, texto);
     }
 
-    private String extrairValorFrete(Bundle bundle) {
-        return bundle.getString(PrecificacaoFreteFragment.EXTRA_VALOR_FRETE);
+    private void limparTodosResultados() {
+        bezerroViewModel.limpar();
+        freteViewModel.limpar();
+        limparResumoComFreteUiState();
     }
 
+    private void limparResumoComFreteUiState() {
+        resumoComFreteViewModel.setState(null);
+    }
 
     private BigDecimal lerPesoUnitario() {
         return getBigDecimal(binding.entradaTextoPesoAnimal);
@@ -434,12 +429,23 @@ public class PrecificacaoFragment extends Fragment {
         return orElse(getBigDecimal(binding.entradaTextoValorFrete), BigDecimal.ZERO);
     }
 
+    private String extrairValorFrete(Bundle bundle) {
+        return bundle.getString(PrecificacaoFreteFragment.EXTRA_VALOR_FRETE);
+    }
+
     private int calcularPesoTotalLote() {
         return lerQuantidade() * lerPesoUnitario().intValue();
     }
-
     private boolean isCategoriaNaoSelecionada() {
         return isEmpty(categoriaViewModel.getCategoriaSelecionada().getValue());
+    }
+
+    private boolean isFreteDeclarado() {
+        return isNotEmpty(lerValorFrete());
+    }
+
+    private boolean isValorFreteDiferente(String novoValor) {
+        return !novoValor.equals(requireText(binding.entradaTextoValorFrete));
     }
 
     private boolean dadosIncompletosParaCalculo() {
@@ -452,13 +458,5 @@ public class PrecificacaoFragment extends Fragment {
 
     private boolean incidenciaDeveSerIgnorada(BigDecimal incidencia) {
         return anyEmpty(incidencia, lerPesoUnitario(), lerQuantidade());
-    }
-
-    private boolean isFreteDeclarado() {
-        return isNotEmpty(lerValorFrete());
-    }
-
-    private boolean isValorFreteDiferente(String novoValor) {
-        return !novoValor.equals(requireText(binding.entradaTextoValorFrete));
     }
 }

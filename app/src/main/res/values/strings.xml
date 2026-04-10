@@ -232,7 +232,7 @@
     <string name="compartilhar_relatorio">Compartilhar relatório</string>
     <string name="erro_gerar_pdf">Erro ao gerar o PDF</string>
     <string name="editar_peso_animal">Editar peso do animal</string>
-    <string name="negocia_o">NEGOCIAÇÃO</string>
+    <string name="negocia_o">FECHAMENTO NEGOCIAÇÃO</string>
     <string name="card_label_peso_medio">Peso médio</string>
     <string name="card_label_cabecas">Cabeças</string>
     <string name="card_label_variacao">Variação</string>
