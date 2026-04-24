@@ -54,6 +54,140 @@
                 app:layout_constraintStart_toEndOf="@id/imagem_icone_frete"
                 app:layout_constraintTop_toTopOf="@id/imagem_icone_frete" />
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/container_cabecalho_empresa"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_28"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imagem_icone_frete">
+
+                <ImageView
+                    android:id="@+id/icone_empresa"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:contentDescription="@null"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/domain_24px"
+                    app:tint="?attr/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/texto_rotulo_empresa"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:letterSpacing="0.08"
+                    android:text="EMPRESA"
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/icone_empresa"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/badge_quantidade_empresas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    app:cardBackgroundColor="?attr/colorSurfaceContainerHigh"
+                    app:cardCornerRadius="100dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/texto_rotulo_empresa"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeWidth="0dp">
+
+                    <TextView
+                        android:id="@+id/quantidade"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="2dp"
+                        android:text="5"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+                </com.google.android.material.card.MaterialCardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_empresas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/container_cabecalho_empresa"
+                tools:listitem="@layout/item_empresa" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_empresa_selecionada"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_16"
+                app:cardBackgroundColor="?attr/colorSecondaryContainer"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recycler_empresas"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp"
+                    android:paddingVertical="10dp">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:contentDescription="@null"
+                        app:srcCompat="@drawable/check_24px"
+                        app:tint="?attr/colorOnSecondaryContainer" />
+
+                    <TextView
+                        android:id="@+id/texto_empresa_selecionada"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="Selecionada: Nome da Empresa"
+                        android:textColor="?attr/colorOnSecondaryContainer"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/campo_descricao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:hint="Descrição"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/card_empresa_selecionada"
+                app:shapeAppearance="?attr/shapeAppearanceCornerSmall"
+                app:startIconDrawable="@drawable/description_24px">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/entrada_texto_descricao"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
             <LinearLayout
                 android:id="@+id/container_metricas_lote"
                 android:layout_width="match_parent"
@@ -63,14 +197,14 @@
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/imagem_icone_frete">
+                app:layout_constraintTop_toBottomOf="@id/campo_descricao">
 
                 <com.google.android.material.card.MaterialCardView
                     style="?attr/materialCardViewFilledStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
                     app:cardBackgroundColor="?attr/colorPrimaryContainer"
                     app:cardElevation="0dp"
                     app:shapeAppearance="?attr/shapeAppearanceCornerLarge">
@@ -135,8 +269,8 @@
                     style="?attr/materialCardViewFilledStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginStart="6dp"
+                    android:layout_weight="1"
                     app:cardBackgroundColor="?attr/colorSurfaceContainerHigh"
                     app:cardElevation="0dp"
                     app:shapeAppearance="?attr/shapeAppearanceCornerLarge">
@@ -266,6 +400,26 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/campo_corretor"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:hint="@string/corretor"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/campo_valor_por_cab"
+                app:shapeAppearance="?attr/shapeAppearanceCornerSmall"
+                app:startIconDrawable="@drawable/approval_delegation_24px">
+
+                <AutoCompleteTextView
+                    android:id="@+id/entrada_texto_corretor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/layout_container_valor_bezerro"
                 android:layout_width="match_parent"
@@ -274,7 +428,7 @@
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/campo_valor_por_cab"
+                app:layout_constraintTop_toBottomOf="@id/campo_corretor"
                 tools:layout="@layout/fragment_resumo_valores"
                 tools:visibility="visible" />
 
@@ -291,7 +445,7 @@
                 tools:visibility="visible" />
 
             <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/layout_container_valor_bezerro_com_frete"
+                android:id="@+id/layout_container_valor_comissao"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_10"
@@ -299,6 +453,18 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/layout_container_valor_frete"
+                tools:layout="@layout/fragment_resumo_valores"
+                tools:visibility="visible" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/layout_container_valor_bezerro_com_frete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_container_valor_comissao"
                 tools:layout="@layout/fragment_resumo_valores"
                 tools:visibility="visible" />
 
@@ -378,7 +544,7 @@
 
         <Button
             android:id="@+id/botao_voltar"
-            style="?attr/materialButtonTonalStyle"
+            style="?attr/materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dimen_20"
@@ -388,8 +554,7 @@
             android:textSize="@dimen/text_14"
             app:layout_constraintEnd_toStartOf="@id/botao_continuar"
             app:layout_constraintStart_toEndOf="@id/layout_info_variacao"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearance="?attr/shapeAppearanceCornerSmall" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/botao_continuar"
@@ -401,8 +566,7 @@
             android:textSize="@dimen/text_14"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/botao_voltar"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearance="?attr/shapeAppearanceCornerSmall" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/botao_finalizar"
@@ -415,8 +579,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/botao_continuar"
-            app:shapeAppearance="?attr/shapeAppearanceCornerSmall" />
+            app:layout_constraintTop_toBottomOf="@id/botao_continuar" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

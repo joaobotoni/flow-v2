@@ -199,7 +199,7 @@
 
         <Button
             android:id="@+id/botao_action_precificacao_frete"
-            style="?attr/materialButtonTonalStyle"
+            style="?attr/materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/dimen_4"
@@ -208,8 +208,7 @@
             android:textSize="@dimen/text_14"
             app:layout_constraintEnd_toStartOf="@id/botao_prosseguir"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearance="?attr/shapeAppearanceCornerSmall" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <Button
             android:id="@+id/botao_prosseguir"
@@ -221,7 +220,7 @@
             android:textSize="@dimen/text_14"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/botao_action_precificacao_frete"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearance="?attr/shapeAppearanceCornerSmall" />
+            app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,7 +3,7 @@ package com.botoni.flow.ui.fragments;
 import static com.botoni.flow.ui.helpers.AlertHelper.showSnackBar;
 import static com.botoni.flow.ui.helpers.ViewHelper.anyEmpty;
 import static com.botoni.flow.ui.helpers.ViewHelper.getBigDecimal;
-import static com.botoni.flow.ui.helpers.ViewHelper.orElse;
+import static com.botoni.flow.ui.helpers.ViewHelper.setText;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,29 +20,14 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.botoni.flow.R;
 import com.botoni.flow.databinding.FragmentDetalhePrecificacaoBinding;
 import com.botoni.flow.ui.adapters.DetalhePrecificacaoAdapter;
-import com.botoni.flow.ui.helpers.FileHelper;
-import com.botoni.flow.ui.helpers.TaskHelper;
 import com.botoni.flow.ui.helpers.ViewHelper;
-import com.botoni.flow.ui.reports.*;
 import com.botoni.flow.ui.state.DetalhePrecoBezerroUiState;
-import com.botoni.flow.ui.state.ResumoValoresUiState;
 import com.botoni.flow.ui.viewmodel.DetalhePrecificacaoViewModel;
-import com.botoni.flow.ui.viewmodel.PrecificacaoFreteViewModel;
 import com.botoni.flow.ui.viewmodel.ResultadoViewModel;
-import com.botoni.flow.ui.viewmodel.ResumoValoresViewModel;
-import com.botoni.flow.ui.viewmodel.RotaViewModel;
-import com.botoni.flow.ui.state.RotaUiState;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-
-import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -52,24 +37,13 @@ public class DetalhePrecificacaoFragment extends Fragment {
     private static final BigDecimal AGIO = new BigDecimal("30");
     private static final BigDecimal PESO_BASE = new BigDecimal("180");
     private static final String CHAVE_RESULTADO_DETALHE = "resultado_detalhe";
-    private static final String CHAVE_RESUMO_BEZERRO = "resumo_bezerro";
-    private static final String CHAVE_RESUMO_COM_FRETE = "resumo_com_frete";
-    private static final String CHAVE_RESULTADO_FINAL = "resultado_final";
-    private static final String CHAVE_VIEWMODEL_SIMULACAO = "viewmodel_simulacao_frete";
-    @Inject
-    TaskHelper taskHelper;
     private FragmentDetalhePrecificacaoBinding binding;
     private DetalhePrecificacaoAdapter adapter;
     private DetalhePrecificacaoViewModel viewModel;
     private ResultadoViewModel resultadoViewModel;
     private int quantidadeTotal;
     private String pesoMedio;
-    private String valorTotalFreteArg;
-    private ResumoValoresViewModel resumoNegociacaoViewModel;
-    private ResumoValoresViewModel resumoComFreteNegociacaoViewModel;
-    private ResultadoViewModel resultadoNegociacaoViewModel;
-    private PrecificacaoFreteViewModel freteViewModel;
-    private RotaViewModel rotaViewModel;
+    private String valorTotalFrete;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,7 +61,7 @@ public class DetalhePrecificacaoFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        inicializarViewModels();
+        configurarEstadoInicial();
         inicializarAdapter();
         inicializarFragmentosEstaticos();
         configurarEventos();
@@ -100,19 +74,22 @@ public class DetalhePrecificacaoFragment extends Fragment {
         binding = null;
     }
 
-    private void inicializarViewModels() {
+    private void configurarEstadoInicial() {
+        extrairArgumentos();
+        inicializarViewModels();
+    }
+
+    private void extrairArgumentos() {
         DetalhePrecificacaoFragmentArgs args = DetalhePrecificacaoFragmentArgs.fromBundle(requireArguments());
         quantidadeTotal = args.getQuantidadeBezerros();
         pesoMedio = args.getPesoMedio();
-        valorTotalFreteArg = args.getValorTotalFrete();
+        valorTotalFrete = args.getValorTotalFrete();
+    }
+
+    private void inicializarViewModels() {
         ViewModelProvider activityProvider = new ViewModelProvider(requireActivity());
         viewModel = activityProvider.get(DetalhePrecificacaoViewModel.class);
         resultadoViewModel = activityProvider.get(CHAVE_RESULTADO_DETALHE, ResultadoViewModel.class);
-        resumoNegociacaoViewModel = activityProvider.get(CHAVE_RESUMO_BEZERRO, ResumoValoresViewModel.class);
-        resumoComFreteNegociacaoViewModel = activityProvider.get(CHAVE_RESUMO_COM_FRETE, ResumoValoresViewModel.class);
-        resultadoNegociacaoViewModel = activityProvider.get(CHAVE_RESULTADO_FINAL, ResultadoViewModel.class);
-        freteViewModel = activityProvider.get(CHAVE_VIEWMODEL_SIMULACAO, PrecificacaoFreteViewModel.class);
-        rotaViewModel = activityProvider.get(RotaViewModel.class);
     }
 
     private void inicializarAdapter() {
@@ -147,52 +124,30 @@ public class DetalhePrecificacaoFragment extends Fragment {
         limparCampoPeso();
     }
 
-    private void onFinalizarClicado() {
-        if (!listaValida()) return;
-        if (!listaCompleta()){
-            showSnackBar(requireView(), getString(R.string.quantidade_incompleta));
-            return;
-        }
-        gerarECompartilharPdf(capturarListaAtual(), capturarTotalAtual());
+    private BigDecimal lerPeso() {
+        return getBigDecimal(binding.entradaPesoBezerro);
+    }
+
+    private boolean campoPesoVazio() {
+        return anyEmpty(lerPeso());
+    }
+
+    private void limparCampoPeso() {
+        ViewHelper.clearText(binding.entradaPesoBezerro);
+    }
+
+    private boolean listaCheia() {
+        return viewModel.size() >= quantidadeTotal;
     }
 
     private void atualizarLista(List<DetalhePrecoBezerroUiState> lista) {
         adapter.submitList(new ArrayList<>(lista));
-        binding.textoContagemBezerros.setText(getString(R.string.bezerros_contagem, lista.size(), quantidadeTotal));
+        setText(binding.textoContagemBezerros, requireContext(), R.string.bezerros_contagem, lista.size(), quantidadeTotal);
         binding.barraProgresso.setProgressCompat(calcularProgresso(lista.size()), true);
     }
 
-    private void gerarECompartilharPdf(List<DetalhePrecoBezerroUiState> lista, BigDecimal total) {
-        ResumoValoresUiState resumo = resumoNegociacaoViewModel.getState().getValue();
-        ResumoValoresUiState resumoComFrete = resumoComFreteNegociacaoViewModel.getState().getValue();
-        BigDecimal totalNeg = resultadoNegociacaoViewModel.getState().getValue();
-        BigDecimal incidencia = orElse(freteViewModel.getIncidencia().getValue(), BigDecimal.ZERO);
-        BigDecimal valorTotalFrete = new BigDecimal(valorTotalFreteArg);
-        BigDecimal peso = new BigDecimal(pesoMedio);
-        double distancia = freteViewModel.getDistancia().getValue() != null ? freteViewModel.getDistancia().getValue() : 0.0;
-        RotaUiState rota = rotaViewModel.getState().getValue();
-        taskHelper.execute(
-                () -> {
-                    File capa = PdfPrecificacaoBuilder.gerarCapaNegociacao(
-                            requireContext(), quantidadeTotal, peso,
-                            resumo != null ? resumo.getValorSecundario() : BigDecimal.ZERO,
-                            resumo != null ? resumo.getValorPrincipal() : BigDecimal.ZERO,
-                            resumoComFrete != null ? resumoComFrete.getValorSecundario() : BigDecimal.ZERO,
-                            resumoComFrete != null ? resumoComFrete.getValorPrincipal() : BigDecimal.ZERO,
-                            orElse(totalNeg, BigDecimal.ZERO), incidencia, valorTotalFrete, distancia, rota);
-                    File detalhe = PdfDetalhePrecificacaoBuilder.gerarRelatorioPrecificacao(
-                            requireContext(), lista, total);
-                    return Arrays.asList(capa, detalhe);
-                },
-                pdfs -> {
-                    if (isAdded())
-                        FileHelper.compartilharMultiplos(requireActivity(), pdfs, "application/pdf", getString(R.string.compartilhar_relatorio));
-                },
-                error -> {
-                    if (isAdded())
-                        showSnackBar(binding.getRoot(), getString(R.string.erro_gerar_pdf));
-                }
-        );
+    private int calcularProgresso(int atual) {
+        return quantidadeTotal == 0 ? 0 : (atual * 100) / quantidadeTotal;
     }
 
     private DetalhePrecificacaoAdapter.OnDetalheActionListener criarListenerDeAcoes() {
@@ -215,6 +170,32 @@ public class DetalhePrecificacaoFragment extends Fragment {
         dialog.show(getChildFragmentManager(), null);
     }
 
+    private void onFinalizarClicado() {
+        if (!listaValida()) return;
+        if (!listaCompleta()) {
+            showSnackBar(requireView(), getString(R.string.quantidade_incompleta));
+            return;
+        }
+        navegarParaSucessoFragment();
+    }
+
+    private boolean listaValida() {
+        List<DetalhePrecoBezerroUiState> lista = viewModel.getState().getValue();
+        return lista != null && !lista.isEmpty();
+    }
+
+    private boolean listaCompleta() {
+        return viewModel.size() == quantidadeTotal;
+    }
+
+    private void navegarParaSucessoFragment() {
+        NavHostFragment.findNavController(this).navigate(
+                DetalhePrecificacaoFragmentDirections
+                        .actionDetalhePrecificacaoFragmentToSucessoFragment(quantidadeTotal, pesoMedio)
+                        .setValorTotalFrete(valorTotalFrete)
+                        .setOrigemDetalhe(true));
+    }
+
     private void registrarCallbackVoltar() {
         requireActivity().getOnBackPressedDispatcher()
                 .addCallback(this, new OnBackPressedCallback(true) {
@@ -227,43 +208,5 @@ public class DetalhePrecificacaoFragment extends Fragment {
 
     private void executarNavegacaoVoltar() {
         NavHostFragment.findNavController(this).popBackStack();
-    }
-
-    private boolean listaValida() {
-        List<DetalhePrecoBezerroUiState> lista = viewModel.getState().getValue();
-        return lista != null && !lista.isEmpty();
-    }
-
-    private List<DetalhePrecoBezerroUiState> capturarListaAtual() {
-        return new ArrayList<>(orElse(viewModel.getState().getValue(), Collections.emptyList()));
-    }
-
-    private BigDecimal capturarTotalAtual() {
-        BigDecimal total = viewModel.getTotal().getValue();
-        return total != null ? total : BigDecimal.ZERO;
-    }
-
-    private int calcularProgresso(int atual) {
-        return quantidadeTotal == 0 ? 0 : (atual * 100) / quantidadeTotal;
-    }
-
-    private BigDecimal lerPeso() {
-        return getBigDecimal(binding.entradaPesoBezerro);
-    }
-
-    private boolean campoPesoVazio() {
-        return anyEmpty(lerPeso());
-    }
-
-    private void limparCampoPeso() {
-        ViewHelper.clearText(binding.entradaPesoBezerro);
-    }
-
-    private boolean listaCheia() {
-        return viewModel.size() >= quantidadeTotal;
-    }
-
-    private boolean listaCompleta() {
-        return viewModel.size() == quantidadeTotal;
     }
 }

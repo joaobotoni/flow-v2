@@ -27,6 +27,7 @@ public class LocationAdapter extends ListAdapter<Address, LocationAdapter.ViewHo
     public interface OnClickListener {
         void onClick(Address address);
     }
+
     private final OnClickListener listener;
 
     public LocationAdapter(OnClickListener listener) {
@@ -52,15 +53,13 @@ public class LocationAdapter extends ListAdapter<Address, LocationAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ItemEnderecoBinding binding = ItemEnderecoBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
-        return new ViewHolder(binding);
+        return new ViewHolder(ItemEnderecoBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.bind(getItem(position), listener);
     }
-
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

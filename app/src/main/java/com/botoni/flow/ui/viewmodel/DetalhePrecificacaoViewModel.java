@@ -120,4 +120,9 @@ public class DetalhePrecificacaoViewModel extends ViewModel {
         List<DetalhePrecoBezerroUiState> lista = state.getValue();
         return lista != null ? lista.size() : 0;
     }
+
+    public void limpar() {
+        state.setValue(new ArrayList<>());
+        total.setValue(BigDecimal.ZERO);
+    }
 }

@@ -65,7 +65,6 @@ public class ResumoValoresFragment extends Fragment {
 
     private void configurarViewModelEObservadores() {
         String chave = getArguments() != null ? getArguments().getString(ARG_CHAVE) : null;
-
         if (chave != null) {
             viewModel = new ViewModelProvider(requireActivity()).get(chave, ResumoValoresViewModel.class);
             viewModel.getState().observe(getViewLifecycleOwner(), state -> {

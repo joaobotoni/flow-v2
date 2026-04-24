@@ -85,8 +85,8 @@ public class MainFragment extends Fragment {
 
     private Configuration buildConfig() {
         return Configuration.builder()
-                .host(readHost())
-                .port(readPort())
+                .host(readIp())
+                .port(readHost())
                 .site(readSite())
                 .username(readUsername())
                 .applicationId(deviceId())
@@ -122,8 +122,8 @@ public class MainFragment extends Fragment {
         return orElse(requireText(binding.entradaTextoHost), "");
     }
 
-    private String readPort() {
-        return orElse(requireText(binding.entradaTextoPorta), "");
+    private String readIp() {
+        return orElse(requireText(binding.entradaTextoIp), "");
     }
 
     private String readSite() {

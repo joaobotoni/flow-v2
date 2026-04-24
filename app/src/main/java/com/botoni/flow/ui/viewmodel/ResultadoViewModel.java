@@ -16,4 +16,8 @@ public class ResultadoViewModel extends ViewModel {
     public LiveData<BigDecimal> getState() {
         return state;
     }
+
+    public void limpar() {
+        state.setValue(null);
+    }
 }

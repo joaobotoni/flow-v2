@@ -17,4 +17,8 @@ public class ResumoValoresViewModel extends ViewModel {
     public LiveData<ResumoValoresUiState> getState() {
         return state;
     }
+
+    public void limpar() {
+        state.setValue(null);
+    }
 }

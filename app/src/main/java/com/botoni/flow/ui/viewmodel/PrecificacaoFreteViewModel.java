@@ -77,5 +77,7 @@ public class PrecificacaoFreteViewModel extends ViewModel {
     }
     public void limpar() {
         state.setValue(null);
+        incidencia.setValue(null);
+        distancia.setValue(null);
     }
 }

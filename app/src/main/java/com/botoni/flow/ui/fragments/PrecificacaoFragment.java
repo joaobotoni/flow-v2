@@ -257,6 +257,7 @@ public class PrecificacaoFragment extends Fragment {
 
     private void redefinirIncidenciaFrete() {
         limparResumoComFreteUiState();
+        if (dadosIncompletosParaCalculo()) return;
         calcularBezerroComDescontoFrete(BigDecimal.ZERO);
     }
 
@@ -410,7 +411,10 @@ public class PrecificacaoFragment extends Fragment {
     private void limparTodosResultados() {
         bezerroViewModel.limpar();
         freteViewModel.limpar();
-        limparResumoComFreteUiState();
+        resumoBezerroViewModel.setState(null);
+        resumoFreteViewModel.setState(null);
+        resumoComFreteViewModel.setState(null);
+        resultadoFinalViewModel.setState(null);
     }
 
     private void limparResumoComFreteUiState() {
@@ -450,14 +454,14 @@ public class PrecificacaoFragment extends Fragment {
     }
 
     private boolean dadosIncompletosParaCalculo() {
-        return anyEmpty(lerPesoUnitario(), lerQuantidade());
+        return anyEmpty(lerPesoUnitario()) || lerQuantidade() <= 0;
     }
 
     private boolean dadosIncompletosParaRecomendacao(ItemOpcaoUiState categoria) {
-        return anyEmpty(categoria, lerQuantidade());
+        return anyEmpty(categoria) || lerQuantidade() <= 0;
     }
 
     private boolean incidenciaDeveSerIgnorada(BigDecimal incidencia) {
-        return anyEmpty(incidencia, lerPesoUnitario(), lerQuantidade());
+        return anyEmpty(incidencia, lerPesoUnitario()) || lerQuantidade() <= 0;
     }
 }

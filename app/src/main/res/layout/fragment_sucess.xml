@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toTopOf="@id/container_rodape"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dimen_20">
+
+            <View
+                android:id="@+id/halo_maior"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:alpha="0.15"
+                android:background="@drawable/shape_circle_soft"
+                app:layout_constraintBottom_toBottomOf="@id/card_icone_sucess"
+                app:layout_constraintEnd_toEndOf="@id/card_icone_sucess"
+                app:layout_constraintStart_toStartOf="@id/card_icone_sucess"
+                app:layout_constraintTop_toTopOf="@id/card_icone_sucess" />
+
+            <View
+                android:id="@+id/halo_menor"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:alpha="0.3"
+                android:background="@drawable/shape_circle_soft"
+                app:layout_constraintBottom_toBottomOf="@id/card_icone_sucess"
+                app:layout_constraintEnd_toEndOf="@id/card_icone_sucess"
+                app:layout_constraintStart_toStartOf="@id/card_icone_sucess"
+                app:layout_constraintTop_toTopOf="@id/card_icone_sucess" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_icone_sucess"
+                style="?attr/materialCardViewFilledStyle"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:cardBackgroundColor="?attr/colorPrimaryContainer"
+                app:cardElevation="0dp"
+                app:layout_constraintBottom_toTopOf="@id/texto_titulo_sucess"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed"
+                app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    app:srcCompat="@drawable/check_24px"
+                    app:tint="?attr/colorOnPrimaryContainer" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/texto_titulo_sucess"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_32"
+                android:text="@string/title_sucess"
+                android:textAllCaps="true"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="@dimen/text_22"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/texto_descricao_sucess"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/card_icone_sucess" />
+
+            <TextView
+                android:id="@+id/texto_descricao_sucess"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_12"
+                android:alpha="0.7"
+                android:gravity="center"
+                android:paddingHorizontal="32dp"
+                android:text="@string/subtitle_sucess"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="@dimen/text_14"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/texto_titulo_sucess" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_rodape"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        android:paddingHorizontal="@dimen/dimen_20"
+        android:paddingTop="@dimen/dimen_12"
+        android:paddingBottom="@dimen/dimen_20"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/botao_concluir"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/button_concluir"
+            android:textSize="@dimen/text_14"
+            app:layout_constraintBottom_toTopOf="@id/botao_gerar_relatorio_e_finalizar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <Button
+            android:id="@+id/botao_gerar_relatorio_e_finalizar"
+            style="?attr/borderlessButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_8"
+            android:fontFamily="sans-serif-medium"
+            android:text="Gerar Relatório e Finalizar"
+            android:textSize="@dimen/text_14"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/botao_concluir" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

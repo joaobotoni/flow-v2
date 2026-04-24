@@ -151,7 +151,7 @@
 
         <Button
             android:id="@+id/botao_voltar"
-            style="?attr/materialButtonTonalStyle"
+            style="?attr/materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dimen_12"
@@ -161,8 +161,7 @@
             android:textSize="@dimen/text_14"
             app:layout_constraintEnd_toStartOf="@id/botao_continuar"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/container_valor_final"
-            app:shapeAppearance="?attr/shapeAppearanceCornerSmall" />
+            app:layout_constraintTop_toBottomOf="@id/container_valor_final" />
 
         <Button
             android:id="@+id/botao_continuar"
@@ -176,8 +175,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/botao_voltar"
-            app:layout_constraintTop_toBottomOf="@id/container_valor_final"
-            app:shapeAppearance="?attr/shapeAppearanceCornerSmall" />
+            app:layout_constraintTop_toBottomOf="@id/container_valor_final" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

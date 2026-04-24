@@ -109,6 +109,12 @@
     <string name="action_dismiss">Dispensar</string>
     <string name="action_continue">Continuar</string>
 
+    <!-- Success Screen -->
+    <string name="title_sucess">OPERAÇÃO CONCLUÍDA</string>
+    <string name="subtitle_sucess">Negociação registrada com sucesso</string>
+    <string name="button_concluir">Concluir</string>
+    <string name="button_ver_comprovante">Ver comprovante</string>
+
     <!-- Success Messages -->
     <string name="message_success">Operação realizada com sucesso!</string>
     <string name="message_saved">Salvo com sucesso</string>
@@ -222,6 +228,9 @@
     <string name="zero">0</string>
     <string name="label_explorar_rotas">Toque para explorar rotas</string>
 
+    <!-- Negociacao -->
+    <string name="label_empresa_selecionada">Selecionada: %s</string>
+
     <!-- Precificacao Review Screen -->
     <string name="peso_bezerro">Peso do bezerro</string>
     <string name="adicionar">Adicionar</string>
@@ -239,4 +248,18 @@
     <string name="hint_peso_referencia">Peso de referência</string>
     <string name="uri_gespec_usuario_service">http://%1$s:%2$s/gespec/gespecservices/UsuarioService/obtem/%3$s/%4$s/%5$s</string>
     <string name="uri_gespec_acesso_service">http://%1$s:%2$s/gespec/gespecservices/AcessoService/obtem/%3$s</string>
+    <string name="corretor">Corretor</string>
+    <string name="texto_coneccao">Preencha os dados de rede abaixo. A equipe de suporte revisará em até 1 hora útil.</string>
+    <string name="dados_de_conexao">DADOS DE CONEXÃO</string>
+    <string name="ip">IP</string>
+    <string name="host">Host</string>
+    <string name="site">Site</string>
+    <string name="identificacao">IDENTIFICAÇÃO</string>
+    <string name="usuario">Usuário</string>
+    <string name="enviar_solicitacao">Enviar solicitação</string>
+    <string name="solicitar_dispositivo">Solicitar liberação do dispositivo</string>
+
 </resources>
+
+
+

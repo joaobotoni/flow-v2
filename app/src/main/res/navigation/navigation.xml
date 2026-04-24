@@ -42,10 +42,16 @@
         android:name="com.botoni.flow.ui.fragments.NegociacaoFragment"
         android:label="NegociacaoFragment"
         tools:layout="@layout/fragment_negociacao">
-
         <action
             android:id="@+id/action_negociacaoFragment_to_detalhePrecificacaoFragment"
             app:destination="@id/detalhePrecificacaoFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_negociacaoFragment_to_sucessoFragment"
+            app:destination="@id/sucessoFragment"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
@@ -61,6 +67,24 @@
         tools:layout="@layout/fragment_detalhe_precificacao">
         <argument android:name="quantidadeBezerros" app:argType="integer" />
         <argument android:name="pesoMedio" app:argType="string" />
-        <argument android:name="valorTotalFrete" app:argType="string" defaultValue="0" />
+        <argument android:name="valorTotalFrete" app:argType="string" android:defaultValue="0" />
+        <action
+            android:id="@+id/action_detalhePrecificacaoFragment_to_sucessoFragment"
+            app:destination="@id/sucessoFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/sucessoFragment"
+        android:name="com.botoni.flow.ui.fragments.SucessoFragment"
+        android:label="SucessoFragment"
+        tools:layout="@layout/fragment_sucess">
+        <argument android:name="quantidade" app:argType="integer" />
+        <argument android:name="pesoMedio" app:argType="string" />
+        <argument android:name="valorTotalFrete" app:argType="string" android:defaultValue="0" />
+        <argument android:name="origemDetalhe" app:argType="boolean" android:defaultValue="false" />
     </fragment>
 </navigation>
